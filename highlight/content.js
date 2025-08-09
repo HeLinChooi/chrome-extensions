@@ -169,23 +169,14 @@ function restoreHighlights() {
 
 document.addEventListener('mouseup', function(e) {
   if (e.ctrlKey || e.metaKey) {
-    highlightSelectedText();
-  }
-});
-
-document.addEventListener('dblclick', function(e) {
-  if (e.target.classList.contains('text-highlighter-yellow')) {
-    if (e.ctrlKey || e.metaKey) {
+    if (e.target.classList.contains('text-highlighter-yellow')) {
       removeHighlight(e.target);
+    } else {
+      highlightSelectedText();
     }
   }
 });
 
-document.addEventListener('keydown', function(e) {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-    e.preventDefault();
-    highlightSelectedText();
-  }
-});
+
 
 setTimeout(restoreHighlights, 500);
