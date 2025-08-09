@@ -1,0 +1,11 @@
+.text-highlighter-yellow {
+  background-color: #ffff00;
+  cursor: pointer;
+  padding: 1px 2px;
+  border-radius: 2px;
+  color: black
+}
+
+.text-highlighter-yellow:hover {
+  background-color: #e5d654;
+}
