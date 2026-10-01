@@ -54,5 +54,6 @@ Then in Chrome: `chrome://extensions` → enable **Developer mode** → **Load
 unpacked** → select `dist/`. After changing code, run `npm run build` and click
 the reload icon on the extension's card.
 
-**Preview the celebration** in the popup plays a sample celebration on the open
-LeetCode problem page without changing your score.
+**Preview the celebration** in the popup has Easy, Medium and Hard buttons. Each
+plays that difficulty's celebration on the open LeetCode problem page without
+changing your score.

@@ -4,7 +4,7 @@
  */
 
 import { slugFromPath, MESSAGE_TYPE } from './lib/check.js';
-import { emptyState, recordAccepted, recordFailure } from './lib/progress.js';
+import { emptyState, recordAccepted, recordFailure, BASE_XP } from './lib/progress.js';
 import { throwConfetti, showCard } from './celebrate.js';
 
 const STATE_KEY = 'progress';
@@ -67,18 +67,19 @@ window.addEventListener('message', (event) => {
     .catch((error) => console.error('[leetcode-cheer] failed to record a verdict', error));
 });
 
-/** The popup's "Preview" button: celebrate a made-up Medium solve, saving nothing. */
-chrome.runtime.onMessage.addListener((message) => {
+/** The popup's preview buttons: celebrate a made-up solve, saving nothing. */
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (!message || message.type !== 'preview') return;
+  const xpGained = BASE_XP[message.difficulty];
   const reward = {
     kind: 'new',
-    difficulty: 'Medium',
-    firstTry: true,
-    xpGained: 38,
-    xp: 138,
+    difficulty: message.difficulty,
+    firstTry: false,
+    xpGained,
+    xp: 100 + xpGained,
     level: 2,
     levelUp: false,
-    xpIntoLevel: 38,
+    xpIntoLevel: xpGained,
     streak: 3,
     solvedToday: 1,
     goal: 2,
@@ -86,4 +87,6 @@ chrome.runtime.onMessage.addListener((message) => {
   };
   throwConfetti(reward);
   showCard(reward, { runtimePercentile: 87.5 });
+  // Answer, so the popup knows a LeetCode page received the preview.
+  sendResponse({ ok: true });
 });

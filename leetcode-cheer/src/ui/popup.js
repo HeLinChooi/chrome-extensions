@@ -51,15 +51,17 @@ $('goal').addEventListener('change', async () => {
   render(state);
 });
 
-$('preview').addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  try {
-    await chrome.tabs.sendMessage(tab.id, { type: 'preview' });
-    window.close();
-  } catch {
-    // No content script answers outside a LeetCode problem page.
-    $('previewNote').hidden = false;
-  }
-});
+for (const button of document.querySelectorAll('.previews button')) {
+  button.addEventListener('click', async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    try {
+      await chrome.tabs.sendMessage(tab.id, { type: 'preview', difficulty: button.dataset.difficulty });
+      window.close();
+    } catch {
+      // No content script answers outside a LeetCode problem page.
+      $('previewNote').hidden = false;
+    }
+  });
+}
 
 loadState().then(render);
