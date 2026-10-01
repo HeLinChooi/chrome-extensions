@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LeetCode Cheer</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div id="level" class="level">Level 1</div>
+    <div class="bar"><div id="fill" class="fill"></div></div>
+    <div id="xp" class="muted">0 XP</div>
+  </header>
+
+  <section class="stats">
+    <div><span class="big">🔥 <span id="streak">0</span></span><span class="muted">day streak</span></div>
+    <div><span id="today" class="big">0/2</span><span class="muted">solved today</span></div>
+  </section>
+
+  <label class="goal">Daily goal <input id="goal" type="number" min="1" max="20" /></label>
+
+  <h2>Recent</h2>
+  <ul id="recent"></ul>
+
+  <button id="preview">Preview the celebration</button>
+  <p id="previewNote" class="muted" hidden>Open a LeetCode problem page first, then try again.</p>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
