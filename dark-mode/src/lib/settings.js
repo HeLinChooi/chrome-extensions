@@ -8,17 +8,21 @@ export const LIMITS = {
 };
 
 export const DEFAULT_SETTINGS = {
+  // Whether a site is dark when it has no choice of its own.
   enabled: true,
   theme: { brightness: 100, contrast: 100, sepia: 0, grayscale: 0 },
-  disabledSites: [],
+  // Site → true (dark) or false (light). Only sites that differ from `enabled` at the time they were switched.
+  sites: {},
 };
 
 export function withDefaults(stored = {}) {
+  const { disabledSites = [], ...rest } = stored;
   return {
     ...DEFAULT_SETTINGS,
-    ...stored,
+    ...rest,
     theme: { ...DEFAULT_SETTINGS.theme, ...stored.theme },
-    disabledSites: stored.disabledSites ?? [],
+    // disabledSites is the setting from version 0.1.0, which could only turn sites off.
+    sites: { ...Object.fromEntries(disabledSites.map((site) => [site, false])), ...stored.sites },
   };
 }
 
@@ -44,15 +48,15 @@ export function frameSite(location) {
 }
 
 export function isDarkFor(settings, site) {
-  return settings.enabled && site !== null && !settings.disabledSites.includes(site);
+  if (site === null) return false;
+  return settings.sites[site] ?? settings.enabled;
 }
 
+/** Flips one site. A site switched back to match the default loses its own choice. */
 export function toggleSite(settings, site) {
-  const disabled = settings.disabledSites.includes(site);
-  return {
-    ...settings,
-    disabledSites: disabled ? settings.disabledSites.filter((s) => s !== site) : [...settings.disabledSites, site],
-  };
+  const dark = !isDarkFor(settings, site);
+  const { [site]: _old, ...sites } = settings.sites;
+  return { ...settings, sites: dark === settings.enabled ? sites : { ...sites, [site]: dark } };
 }
 
 /** The theme in the shape `DarkReader.enable` takes. */

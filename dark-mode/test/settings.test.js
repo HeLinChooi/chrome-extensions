@@ -43,11 +43,32 @@ test('turning a site off leaves other sites dark', () => {
 
 test('toggling a site twice turns it back on', () => {
   const settings = toggleSite(toggleSite(DEFAULT_SETTINGS, 'example.com'), 'example.com');
-  assert.deepEqual(settings.disabledSites, []);
+  assert.deepEqual(settings.sites, {});
 });
 
-test('no site is dark when the extension is off', () => {
+test('no site is dark when dark mode everywhere is off', () => {
   assert.equal(isDarkFor({ ...DEFAULT_SETTINGS, enabled: false }, 'example.com'), false);
+});
+
+test('a site can be turned on while dark mode everywhere is off', () => {
+  const settings = toggleSite({ ...DEFAULT_SETTINGS, enabled: false }, 'example.com');
+  assert.equal(isDarkFor(settings, 'example.com'), true);
+});
+
+test('turning one site on leaves other sites light while dark mode everywhere is off', () => {
+  const settings = toggleSite({ ...DEFAULT_SETTINGS, enabled: false }, 'example.com');
+  assert.equal(isDarkFor(settings, 'other.com'), false);
+});
+
+test('a site turned off stays off when dark mode everywhere is switched off and on again', () => {
+  const off = toggleSite(DEFAULT_SETTINGS, 'example.com');
+  const settings = { ...off, enabled: true };
+  assert.equal(isDarkFor({ ...settings, enabled: false }, 'example.com') || isDarkFor(settings, 'example.com'), false);
+});
+
+test('sites turned off with the old setting are still off', () => {
+  const settings = withDefaults({ disabledSites: ['example.com'] });
+  assert.equal(isDarkFor(settings, 'example.com'), false);
 });
 
 test('a page with no site is never dark', () => {

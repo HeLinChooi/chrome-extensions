@@ -19,8 +19,7 @@ function render(settings) {
   $('siteRow').hidden = site === null;
   $('noSite').hidden = site !== null;
   $('site').textContent = site ?? '';
-  $('siteOn').checked = isDarkFor({ ...settings, enabled: true }, site);
-  $('siteOn').disabled = !settings.enabled;
+  $('siteOn').checked = isDarkFor(settings, site);
   for (const key of SLIDERS) {
     $(key).value = String(settings.theme[key]);
     $(key).nextElementSibling.textContent = String(settings.theme[key]);

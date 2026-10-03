@@ -9,10 +9,13 @@ its `darkreader` npm package.
 - **Every site is dark by default.** Dark Reader reads each page's stylesheets
   and writes a dark version of every colour. It does not simply invert the
   page, so images and videos keep their real colours.
-- **A switch for the current site**, in the popup or with **Alt+Shift+A**. The
-  choice is remembered for that site. Iframes follow the page they are in.
-- **A switch for every site**, in the popup or with **Alt+Shift+D**. The badge
-  shows "off" while it is off.
+- **A switch for the current site**, in the popup or with **Alt+Shift+A**. It
+  works in both directions: it can turn one site light while the rest are
+  dark, or turn one site dark while the rest are light. The choice is
+  remembered for that site. Iframes follow the page they are in.
+- **A switch for all other sites**, in the popup or with **Alt+Shift+D**. It
+  sets the default for every site without its own choice. Turn it off to keep
+  the web light and make only the sites you choose dark.
 - **Brightness, contrast, sepia and grayscale** sliders. They apply to every
   site.
 

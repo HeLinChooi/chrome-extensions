@@ -6,8 +6,8 @@
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-  <label class="switch"><span>Dark mode everywhere</span><input id="enabled" type="checkbox" /></label>
-  <label class="switch" id="siteRow"><span>On <strong id="site"></strong></span><input id="siteOn" type="checkbox" /></label>
+  <label class="switch" id="siteRow"><span>Dark on <strong id="site"></strong></span><input id="siteOn" type="checkbox" /></label>
+  <label class="switch"><span>Dark on all other sites<small>Sites you switch on their own keep their choice.</small></span><input id="enabled" type="checkbox" /></label>
   <p id="noSite" class="muted" hidden>This page cannot be changed by extensions.</p>
 
   <h2>Theme</h2>
@@ -17,7 +17,7 @@
   <label class="slider">Grayscale <input id="grayscale" type="range" min="0" max="100" /><output></output></label>
   <button id="reset">Reset theme</button>
 
-  <p class="muted keys">Alt+Shift+D turns it on or off everywhere. Alt+Shift+A does the same for this site.</p>
+  <p class="muted keys">Alt+Shift+A switches this site. Alt+Shift+D switches all other sites.</p>
 
   <script type="module" src="popup.js"></script>
 </body>

@@ -56,12 +56,3 @@ const commands = {
 };
 
 chrome.commands.onCommand.addListener((name) => commands[name]?.());
-
-async function updateBadge() {
-  const settings = await loadSettings();
-  await chrome.action.setBadgeText({ text: settings.enabled ? '' : 'off' });
-  await chrome.action.setBadgeBackgroundColor({ color: '#6b7280' });
-}
-
-chrome.storage.onChanged.addListener((changes) => changes.settings && updateBadge());
-updateBadge();

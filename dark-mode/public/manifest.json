@@ -21,7 +21,7 @@
   "commands": {
     "toggle-everywhere": {
       "suggested_key": { "default": "Alt+Shift+D" },
-      "description": "Turn dark mode on or off everywhere"
+      "description": "Turn dark mode on or off for all sites without their own choice"
     },
     "toggle-site": {
       "suggested_key": { "default": "Alt+Shift+A" },
