@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Ad Block",
+  "version": "0.1.0",
+  "description": "Blocks ads, trackers and cookie banners with EasyList, EasyPrivacy and the EasyList Cookie List.",
+  "permissions": ["declarativeNetRequest", "declarativeNetRequestFeedback", "scripting", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      { "id": "easylist", "enabled": true, "path": "rules/easylist.json" },
+      { "id": "easyprivacy", "enabled": true, "path": "rules/easyprivacy.json" },
+      { "id": "cookies", "enabled": true, "path": "rules/cookies.json" }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Ad Block",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

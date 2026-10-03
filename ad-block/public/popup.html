@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Ad Block</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div id="site" class="site"></div>
+    <div><span id="total" class="big">0</span> <span class="muted">blocked on this page</span></div>
+  </header>
+  <ul id="counts" class="counts"></ul>
+
+  <button id="pause" class="pause"></button>
+  <p id="noSite" class="muted" hidden>Extensions cannot block anything on this page.</p>
+
+  <h2>Block</h2>
+  <div id="lists"></div>
+  <label class="switch"><span>Blocking on</span><input id="enabled" type="checkbox" /></label>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
