@@ -1,0 +1,39 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1f2430;
+  --muted: #6b7280;
+  --track: #e5e7eb;
+  --accent: #2563eb;
+  --due: #dc2626;
+  --border: #e5e7eb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1f2430;
+    --fg: #f4f4f5;
+    --muted: #a1a1aa;
+    --track: #3a4150;
+    --border: #3a4150;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  width: 300px;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.45 system-ui, -apple-system, sans-serif;
+}
+.muted { color: var(--muted); }
+.big { font-size: 28px; font-weight: 700; }
+.bar { height: 8px; margin: 6px 0 4px; border-radius: 4px; background: var(--track); overflow: hidden; }
+.fill { height: 100%; background: var(--accent); }
+.fill.due { background: var(--due); }
+.actions { display: flex; gap: 8px; margin: 14px 0; }
+.actions button { flex: 1; padding: 6px; }
+h2 { font-size: 13px; margin: 16px 0 6px; }
+.row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+.row input { width: 56px; }
+.check { display: flex; align-items: center; gap: 6px; padding: 4px 0; }
