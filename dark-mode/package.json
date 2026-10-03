@@ -1,0 +1,19 @@
+{
+  "name": "dark-mode",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension that turns every website dark, using the Dark Reader engine.",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "icons": "node scripts/gen-icons.mjs",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "dependencies": {
+    "darkreader": "^4.9.133"
+  }
+}

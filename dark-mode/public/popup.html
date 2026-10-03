@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Dark Mode</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <label class="switch" id="siteRow"><span>Dark on <strong id="site"></strong></span><input id="siteOn" type="checkbox" /></label>
+  <label class="switch"><span>Dark on all other sites<small>Sites you switch on their own keep their choice.</small></span><input id="enabled" type="checkbox" /></label>
+  <p id="noSite" class="muted" hidden>This page cannot be changed by extensions.</p>
+
+  <h2>Theme</h2>
+  <label class="slider">Brightness <input id="brightness" type="range" min="50" max="150" /><output></output></label>
+  <label class="slider">Contrast <input id="contrast" type="range" min="50" max="150" /><output></output></label>
+  <label class="slider">Sepia <input id="sepia" type="range" min="0" max="100" /><output></output></label>
+  <label class="slider">Grayscale <input id="grayscale" type="range" min="0" max="100" /><output></output></label>
+  <button id="reset">Reset theme</button>
+
+  <p class="muted keys">Alt+Shift+A switches this site. Alt+Shift+D switches all other sites.</p>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
