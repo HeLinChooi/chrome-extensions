@@ -28,6 +28,18 @@ async function effectiveIdle(idle, settings) {
   return audible.length ? 'active' : idle;
 }
 
+/**
+ * The tail of the queue of state changes. The alarm and an idle event can
+ * arrive together, and each reads the stored state, changes it and writes it
+ * back. Run at the same time, the second write would erase the first.
+ */
+let queue = Promise.resolve();
+function serial(change) {
+  const run = queue.then(change);
+  queue = run.catch((error) => console.error('[break-reminder]', error));
+  return run;
+}
+
 async function handle(idle) {
   const settings = await loadSettings();
   const now = Date.now();
@@ -75,14 +87,14 @@ async function update(change) {
 }
 
 const actions = {
-  snooze: () => update((state, now) => snooze(state, now, SNOOZE_MINUTES)),
-  startOver: () => update(startOver),
+  snooze: () => serial(() => update((state, now) => snooze(state, now, SNOOZE_MINUTES))),
+  startOver: () => serial(() => update(startOver)),
 };
 
 // Runs each time Chrome starts the worker, so a lost alarm is created again.
 setUp();
-chrome.alarms.onAlarm.addListener((alarm) => alarm.name === TICK && tick());
-chrome.idle.onStateChanged.addListener(handle);
+chrome.alarms.onAlarm.addListener((alarm) => alarm.name === TICK && serial(tick));
+chrome.idle.onStateChanged.addListener((idle) => serial(() => handle(idle)));
 
 chrome.notifications.onButtonClicked.addListener((id, index) => {
   if (id === NOTIFICATION) (index === 0 ? actions.snooze : actions.startOver)();
@@ -96,5 +108,5 @@ chrome.runtime.onMessage.addListener((message, _sender, reply) => {
 });
 
 chrome.storage.onChanged.addListener((changes) => {
-  if (changes.settings) setUp().then(tick);
+  if (changes.settings) setUp().then(() => serial(tick));
 });
