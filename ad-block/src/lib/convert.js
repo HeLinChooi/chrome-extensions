@@ -220,6 +220,16 @@ function addTo(map, host, selector) {
   map.get(host).add(selector);
 }
 
+/** Drops the given selectors from every host, and drops hosts left with none. */
+function withoutSelectors(map, selectors) {
+  const result = new Map();
+  for (const [host, hostSelectors] of map) {
+    const kept = [...hostSelectors].filter((s) => !selectors.has(s));
+    if (kept.length) result.set(host, new Set(kept));
+  }
+  return result;
+}
+
 const toObject = (map) => Object.fromEntries([...map].map(([host, selectors]) => [host, [...selectors]]));
 
 /**
@@ -272,7 +282,7 @@ export function convertList(text) {
     rules,
     cosmetic: {
       generic: [...generic].filter((s) => !genericExceptions.has(s)),
-      specific: toObject(specific),
+      specific: toObject(withoutSelectors(specific, genericExceptions)),
       exceptions: toObject(exceptions),
       generichide: [...generichide],
     },

@@ -129,3 +129,8 @@ test('a generic filter with excluded domains becomes an exception on those domai
   const { cosmetic } = convertList('~shop.com##.ad');
   assert.deepEqual([cosmetic.generic, cosmetic.exceptions], [['.ad'], { 'shop.com': ['.ad'] }]);
 });
+
+test('a generic exception with no domain also cancels the same selector on a single site', () => {
+  const { cosmetic } = convertList(['news.com##.ad', 'news.com##.promo', '#@#.ad'].join('\n'));
+  assert.deepEqual(cosmetic.specific, { 'news.com': ['.promo'] });
+});
