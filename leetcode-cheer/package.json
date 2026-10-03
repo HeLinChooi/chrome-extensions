@@ -1,0 +1,19 @@
+{
+  "name": "leetcode-cheer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension that celebrates accepted LeetCode submissions with confetti, XP, streaks and a daily goal.",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "icons": "node scripts/gen-icons.mjs",
+    "test": "TZ=UTC node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.3"
+  }
+}
