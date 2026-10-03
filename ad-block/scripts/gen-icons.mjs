@@ -1,43 +1,50 @@
 /**
- * Generates the extension icons with no external tooling: a teal rounded
- * square with a white shield.
+ * Generates the extension icons with no external tooling: a teal shield on a
+ * transparent background.
  */
 import { deflateSync } from 'node:zlib';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
-const BG = [14, 116, 144];
-const FG = [255, 255, 255];
+// The left half is lighter than the right, so the shield shows on light and dark toolbars.
+const LIGHT = [6, 182, 212];
+const DARK = [14, 116, 144];
+// Each pixel is sampled on a 4×4 grid, and the share of samples inside the
+// shield becomes its opacity. This smooths the curved edges at 16 px.
+const SAMPLES = 4;
 
 function render(size) {
   const buf = Buffer.alloc(size * size * 4);
-  const radius = size * 0.22;
-  const inCorner = (x, y) => {
-    const cx = Math.min(Math.max(x, radius), size - radius);
-    const cy = Math.min(Math.max(y, radius), size - radius);
-    return (x - cx) ** 2 + (y - cy) ** 2 <= radius ** 2;
-  };
 
-  // The shield: straight sides on top, curving to a point at the bottom.
-  const [left, right, top, waist, tip] = [0.27, 0.73, 0.22, 0.52, 0.82].map((v) => v * size);
+  // The shield: a top edge that dips in the middle, straight sides, and
+  // sides that curve in to a point at the bottom.
+  const [left, right, top, dip, waist, tip] = [0.1, 0.9, 0.06, 0.06, 0.42, 0.97].map((v) => v * size);
+  const centre = size / 2;
+  const halfWidth = (right - left) / 2;
   const onShield = (x, y) => {
-    if (y < top || y > tip || x < left || x > right) return false;
+    const across = (x - centre) / halfWidth; // -1 at the left edge, 1 at the right
+    if (Math.abs(across) > 1 || y > tip) return false;
+    if (y < top + dip * (1 - across * across)) return false;
     if (y <= waist) return true;
-    // Below the waist, the half-width shrinks along a quarter ellipse to zero at the tip.
+    // Below the waist, the half-width follows a quarter cosine. It reaches zero
+    // at the tip with a slope, which makes a point rather than a round bottom.
     const t = (y - waist) / (tip - waist);
-    return Math.abs(x - size / 2) <= ((right - left) / 2) * Math.sqrt(1 - t * t);
+    return Math.abs(x - centre) <= halfWidth * Math.cos((t * Math.PI) / 2);
   };
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      const p = [x + 0.5, y + 0.5];
-      if (!inCorner(...p)) continue;
-      const onIcon = onShield(...p);
-      const colour = onIcon ? FG : BG;
+      let inside = 0;
+      for (let sy = 0; sy < SAMPLES; sy++) {
+        for (let sx = 0; sx < SAMPLES; sx++) {
+          if (onShield(x + (sx + 0.5) / SAMPLES, y + (sy + 0.5) / SAMPLES)) inside++;
+        }
+      }
+      const colour = x + 0.5 < centre ? LIGHT : DARK;
       const i = (y * size + x) * 4;
       buf[i] = colour[0];
       buf[i + 1] = colour[1];
       buf[i + 2] = colour[2];
-      buf[i + 3] = 255;
+      buf[i + 3] = Math.round((inside / (SAMPLES * SAMPLES)) * 255);
     }
   }
   return buf;
