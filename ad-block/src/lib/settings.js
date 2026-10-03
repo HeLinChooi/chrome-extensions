@@ -1,9 +1,11 @@
 import { LISTS } from './lists.js';
+import { hostSuffixes } from './cosmetic.js';
 
 export const DEFAULT_SETTINGS = {
   enabled: true,
   lists: Object.fromEntries(LISTS.map((list) => [list.id, true])),
-  pausedSites: [],
+  // Site → time its pause ends, in milliseconds since 1970. null means always.
+  paused: {},
 };
 
 export function withDefaults(stored = {}) {
@@ -11,7 +13,7 @@ export function withDefaults(stored = {}) {
     ...DEFAULT_SETTINGS,
     ...stored,
     lists: { ...DEFAULT_SETTINGS.lists, ...stored.lists },
-    pausedSites: stored.pausedSites ?? [],
+    paused: { ...stored.paused },
   };
 }
 
@@ -31,10 +33,39 @@ export function siteOf(url) {
   return parsed.hostname.replace(/^www\./, '');
 }
 
-export function togglePause(settings, site) {
-  const paused = settings.pausedSites.includes(site);
-  return {
-    ...settings,
-    pausedSites: paused ? settings.pausedSites.filter((s) => s !== site) : [...settings.pausedSites, site],
-  };
+const isActive = (until, now) => until === null || until > now;
+
+/** @param until when the pause ends, in milliseconds since 1970, or null for always */
+export function pauseSite(settings, site, until) {
+  return { ...settings, paused: { ...settings.paused, [site]: until } };
+}
+
+export function resumeSite(settings, site) {
+  const { [site]: _removed, ...paused } = settings.paused;
+  return { ...settings, paused };
+}
+
+/** Sites paused right now. */
+export function pausedSites(settings, now) {
+  return Object.entries(settings.paused)
+    .filter(([, until]) => isActive(until, now))
+    .map(([site]) => site);
+}
+
+/** The pause that covers a host, from the host itself or a parent domain, or null. */
+export function pauseOf(settings, host, now) {
+  for (const site of hostSuffixes(host)) {
+    if (site in settings.paused && isActive(settings.paused[site], now)) return { site, until: settings.paused[site] };
+  }
+  return null;
+}
+
+/** When the next timed pause ends, or null if none will. */
+export function nextPauseEnd(settings, now) {
+  const ends = Object.values(settings.paused).filter((until) => until !== null && until > now);
+  return ends.length ? Math.min(...ends) : null;
+}
+
+export function dropEndedPauses(settings, now) {
+  return { ...settings, paused: Object.fromEntries(Object.entries(settings.paused).filter(([, until]) => isActive(until, now))) };
 }

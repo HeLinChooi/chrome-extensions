@@ -12,7 +12,20 @@
   </header>
   <ul id="counts" class="counts"></ul>
 
-  <button id="pause" class="pause"></button>
+  <section id="pauseBox" class="pause-box">
+    <div id="pauseChoices">
+      <div class="label">Pause on <strong class="host"></strong></div>
+      <div class="choices">
+        <button data-hours="1">1 hour</button>
+        <button data-hours="24">1 day</button>
+        <button data-hours="always">Always</button>
+      </div>
+    </div>
+    <div id="pausedNote" class="paused">
+      <div class="label"><span id="pausedText"></span></div>
+      <button id="resume">Resume blocking</button>
+    </div>
+  </section>
   <p id="noSite" class="muted" hidden>Extensions cannot block anything on this page.</p>
 
   <h2>Block</h2>

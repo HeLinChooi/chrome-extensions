@@ -16,8 +16,13 @@ of Ghostery. It uses three public filter lists:
   banners.
 - **The badge shows how many requests it blocked** on the current tab.
 - **The popup** splits that count into ads, trackers and cookie banners.
-- **Pause on a site** if blocking breaks it. The tab reloads with nothing
-  blocked. Pausing `bbc.com` also pauses `www.bbc.com` and other subdomains.
+- **Pause on a site** if blocking breaks it, for **1 hour**, **1 day** or
+  **Always**. The tab reloads with nothing blocked. The popup shows when the
+  pause ends, and **Resume blocking** ends it early. Pausing `bbc.com` also
+  pauses `www.bbc.com` and other subdomains.
+- **A timed pause ends by itself.** An alarm wakes the extension at the end
+  time and turns blocking back on. Pages already open stay unblocked until
+  they are reloaded.
 - **Each list can be turned off** in the popup, and so can all blocking.
 
 ## How it works

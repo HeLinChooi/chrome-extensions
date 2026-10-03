@@ -3,7 +3,7 @@
   "name": "Ad Block",
   "version": "0.1.0",
   "description": "Blocks ads, trackers and cookie banners with EasyList, EasyPrivacy and the EasyList Cookie List.",
-  "permissions": ["declarativeNetRequest", "declarativeNetRequestFeedback", "scripting", "storage"],
+  "permissions": ["declarativeNetRequest", "declarativeNetRequestFeedback", "scripting", "storage", "alarms"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",

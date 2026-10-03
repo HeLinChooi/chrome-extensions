@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { hostSuffixes, genericExcludedHosts, selectorsFor, cssFor, excludeMatchesFor, siteMatches } from '../src/lib/cosmetic.js';
+import { hostSuffixes, genericExcludedHosts, selectorsFor, cssFor, excludeMatchesFor } from '../src/lib/cosmetic.js';
 
 const lists = {
   generic: ['.ad', '.banner'],
@@ -48,12 +48,4 @@ test('an IP address is not turned into a match pattern, which Chrome would rejec
 
 test('the CSS hides each selector in its own rule, so one bad selector cannot void the rest', () => {
   assert.equal(cssFor(['.a', '.b']), '.a{display:none!important}\n.b{display:none!important}');
-});
-
-test('a paused site also covers its subdomains', () => {
-  assert.equal(siteMatches(['news.com'], 'www.news.com'), true);
-});
-
-test('a paused site does not cover a different site that ends the same way', () => {
-  assert.equal(siteMatches(['news.com'], 'fakenews.com'), false);
 });

@@ -1,8 +1,8 @@
 import { LISTS } from '../lib/lists.js';
-import { withDefaults, siteOf, togglePause } from '../lib/settings.js';
-import { siteMatches } from '../lib/cosmetic.js';
+import { withDefaults, siteOf, pauseSite, resumeSite, pauseOf } from '../lib/settings.js';
 
 const $ = (id) => document.getElementById(id);
+const HOUR = 3_600_000;
 
 const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 const site = tab?.url ? siteOf(tab.url) : null;
@@ -50,13 +50,26 @@ function renderCounts(counts) {
   );
 }
 
+function pausedText({ site: pausedSite, until }) {
+  if (until === null) return `Blocking is off on ${pausedSite}.`;
+  const sameDay = new Date(until).toDateString() === new Date().toDateString();
+  const time = new Date(until).toLocaleString([], {
+    ...(sameDay ? {} : { weekday: 'short' }),
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  return `Blocking is off on ${pausedSite} until ${time}.`;
+}
+
 function render(settings) {
-  const paused = site !== null && siteMatches(settings.pausedSites, site);
+  const pause = site === null ? null : pauseOf(settings, site, Date.now());
   $('site').textContent = site ?? '';
   $('noSite').hidden = site !== null;
-  $('pause').hidden = site === null || !settings.enabled;
-  $('pause').textContent = paused ? `Paused on ${site}. Resume` : `Pause on ${site}`;
-  $('pause').classList.toggle('paused', paused);
+  $('pauseBox').hidden = site === null || !settings.enabled;
+  $('pauseChoices').hidden = pause !== null;
+  $('pausedNote').hidden = pause === null;
+  document.querySelector('#pauseChoices .host').textContent = site ?? '';
+  if (pause) $('pausedText').textContent = pausedText(pause);
   $('enabled').checked = settings.enabled;
 
   $('lists').replaceChildren(
@@ -82,14 +95,38 @@ function render(settings) {
   );
 }
 
-$('pause').addEventListener('click', async () => {
-  await save(togglePause(await load(), site));
-  // The page has to load again for its requests to be blocked or allowed.
+// The page has to load again for its requests to be blocked or allowed.
+async function saveAndReload(settings) {
+  await save(settings);
+  await chrome.runtime.sendMessage({ type: 'apply' });
   await chrome.tabs.reload(tab.id);
+}
+
+for (const button of document.querySelectorAll('#pauseChoices button')) {
+  button.addEventListener('click', async () => {
+    const { hours } = button.dataset;
+    const until = hours === 'always' ? null : Date.now() + Number(hours) * HOUR;
+    await saveAndReload(pauseSite(await load(), site, until));
+  });
+}
+
+// Resumes the pause that covers this page, which may be on a parent domain.
+$('resume').addEventListener('click', async () => {
+  const settings = await load();
+  await saveAndReload(resumeSite(settings, pauseOf(settings, site, Date.now()).site));
 });
 
 $('enabled').addEventListener('change', async () => save({ ...(await load()), enabled: $('enabled').checked }));
 
+async function refreshCounts() {
+  renderCounts(await blockedCounts().catch(() => Object.fromEntries(LISTS.map((l) => [l.id, 0]))));
+}
+
+// After a pause or resume, the tab reloads and its count starts again.
+chrome.tabs.onUpdated.addListener((tabId, change) => {
+  if (tabId === tab?.id && change.status === 'complete') refreshCounts();
+});
+
 chrome.storage.onChanged.addListener(async () => render(await load()));
 render(await load());
-renderCounts(await blockedCounts().catch(() => Object.fromEntries(LISTS.map((l) => [l.id, 0]))));
+await refreshCounts();

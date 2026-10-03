@@ -14,10 +14,6 @@ export function hostSuffixes(host) {
   return parts.map((_, i) => parts.slice(i).join('.'));
 }
 
-export function siteMatches(sites, host) {
-  return hostSuffixes(host).some((suffix) => sites.includes(suffix));
-}
-
 function collect(map, suffixes) {
   return new Set(suffixes.flatMap((suffix) => map[suffix] ?? []));
 }
