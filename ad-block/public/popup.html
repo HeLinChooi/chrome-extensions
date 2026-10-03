@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Ad Block</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div id="site" class="site"></div>
+    <div><span id="total" class="big">0</span> <span class="muted">blocked on this page</span></div>
+  </header>
+  <ul id="counts" class="counts"></ul>
+
+  <section id="pauseBox" class="pause-box">
+    <div id="pauseChoices">
+      <div class="label">Pause on <strong class="host"></strong></div>
+      <div class="choices">
+        <button data-hours="1">1 hour</button>
+        <button data-hours="24">1 day</button>
+        <button data-hours="always">Always</button>
+      </div>
+    </div>
+    <div id="pausedNote" class="paused">
+      <div class="label"><span id="pausedText"></span></div>
+      <button id="resume">Resume blocking</button>
+    </div>
+  </section>
+  <p id="noSite" class="muted" hidden>Extensions cannot block anything on this page.</p>
+
+  <h2>Block</h2>
+  <div id="lists"></div>
+  <label class="switch"><span>Blocking on</span><input id="enabled" type="checkbox" /></label>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

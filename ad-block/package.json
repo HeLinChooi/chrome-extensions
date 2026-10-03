@@ -1,0 +1,17 @@
+{
+  "name": "ad-block",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension that blocks ads, trackers and cookie banners with EasyList, EasyPrivacy and the EasyList Cookie List.",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "update-lists": "node scripts/lists.mjs --download",
+    "icons": "node scripts/gen-icons.mjs",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
