@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Break Reminder</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div class="muted">Screen time without a break</div>
+    <div id="minutes" class="big">0 min</div>
+    <div class="bar"><div id="fill" class="fill"></div></div>
+    <div id="due" class="muted"></div>
+  </header>
+
+  <div class="actions">
+    <button id="startOver">I just took a break</button>
+    <button id="snooze" hidden>Snooze 10 min</button>
+  </div>
+
+  <h2>Settings</h2>
+  <label class="row">Remind me after <span><input id="workMinutes" type="number" min="5" max="180" /> min</span></label>
+  <label class="row">A break lasts <span><input id="breakMinutes" type="number" min="1" max="60" /> min</span></label>
+  <label class="row">Repeat the reminder every <span><input id="repeatMinutes" type="number" min="1" max="60" /> min</span></label>
+  <label class="check"><input id="audibleCountsAsActive" type="checkbox" /> Count a tab playing sound as screen time</label>
+  <label class="check"><input id="enabled" type="checkbox" /> Reminders on</label>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

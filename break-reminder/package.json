@@ -1,0 +1,16 @@
+{
+  "name": "break-reminder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension that reminds you to take a break after 30 minutes of continuous screen time.",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "icons": "node scripts/gen-icons.mjs",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
