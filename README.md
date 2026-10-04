@@ -30,6 +30,6 @@ Highlight has no build step. Load the `highlight/` folder itself.
 
 ## History
 
-Tab Triage, LeetCode Cheer and Highlight started as their own repositories.
-Their commit history was moved into this repository, so `git log -- tab-triage`
-shows the full history of one extension.
+Tab Triage, LeetCode Cheer and Highlight started as their own repositories,
+which are now archived. Their commit history was moved into this repository, so
+`git log -- tab-triage` shows the full history of one extension.
