@@ -222,11 +222,14 @@ async function wakeTab(tabId, timeoutMs = WAKE_TIMEOUT_MS) {
  * estimate, which the report reports as unmeasured.
  */
 export async function enrichWithContent(tabs, opts = {}) {
+  // The "Read page text" setting can be on while Chrome holds no permission for
+  // it: permissions belong to the extension ID, and an unpacked extension loaded
+  // from a new folder gets a new ID. Say so, so the report can name the cause.
   if (!(await hasPageAccess())) {
     return {
       tabs, scraped: 0, cached: 0, asleep: 0, loading: 0, restricted: 0,
       timedOut: 0, pastDeadline: 0, woken: 0, wakeFailed: 0, thin: 0,
-      frozen: 0, revived: 0, skipped: 0,
+      frozen: 0, revived: 0, skipped: 0, noPageAccess: true,
     };
   }
 

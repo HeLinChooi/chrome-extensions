@@ -99,6 +99,11 @@ export async function runAnalysis(opts = {}) {
       ...report.warnings,
       `Estimates come from titles and URLs alone. Turn on "Read page text" in Settings to use real word counts and video lengths; without it a 45-minute video and a 3-minute one score the same flat guess.`,
     ];
+  } else if (scrapeInfo.noPageAccess) {
+    report.warnings = [
+      ...report.warnings,
+      `${report.totals.tabs} of ${report.totals.tabs} tabs could not be read: page access is not granted, so estimates come from titles and URLs alone. Open Settings and turn on "Read page text" to grant it again. Chrome keeps this permission per extension ID, so reloading the extension from a different folder removes it.`,
+    ];
   } else if (report.totals.unread > 0) {
     const share = Math.round((report.totals.unread / report.totals.tabs) * 100);
     report.warnings = [
