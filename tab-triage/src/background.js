@@ -10,8 +10,13 @@ import { getSettings, getLastReport, parseTimeOfDay, nextOccurrence, DEFAULTS } 
 import { headline, subhead, formatMinutes } from './lib/format.js';
 import { createCancelToken } from './lib/async.js';
 import { matchLiveTabs } from './lib/match.js';
+import { buildSnapshot, snapshotFilename } from './lib/snapshot.js';
 
 const DIGEST_ALARM = 'morning-digest';
+const SNAPSHOT_ALARM = 'tab-snapshot';
+// Ten minutes before the coach's 22:25 export on the host, which moves the
+// file into the coach's folder. Change both together.
+const SNAPSHOT_TIME = { hours: 22, minutes: 15 };
 
 /**
  * The run currently in flight, if any. A run can take a while when page reading
@@ -92,6 +97,72 @@ async function scheduleDigest() {
   // sync with local wall-clock time across DST changes.
   await chrome.alarms.create(DIGEST_ALARM, { when });
   return when;
+}
+
+async function scheduleSnapshot() {
+  await chrome.alarms.clear(SNAPSHOT_ALARM);
+  // Fires once and reschedules, for the same reason as the digest. If Chrome is
+  // closed at 22:15, Chrome fires the missed alarm when it next starts.
+  await chrome.alarms.create(SNAPSHOT_ALARM, { when: nextOccurrence(SNAPSHOT_TIME) });
+}
+
+/** Resolve when a download finishes or fails. A data: URL takes milliseconds. */
+function downloadFinished(id, timeoutMs = 10000) {
+  return new Promise((resolve) => {
+    const done = (state) => {
+      clearTimeout(timer);
+      chrome.downloads.onChanged.removeListener(listener);
+      resolve(state);
+    };
+    const listener = (delta) => {
+      if (delta.id !== id || !delta.state) return;
+      if (delta.state.current !== 'in_progress') done(delta.state.current);
+    };
+    const timer = setTimeout(() => done('timeout'), timeoutMs);
+    chrome.downloads.onChanged.addListener(listener);
+    chrome.downloads.search({ id }).then(([item]) => {
+      if (item && item.state !== 'in_progress') done(item.state);
+    });
+  });
+}
+
+/**
+ * Save today's tab snapshot to Downloads/tab-triage/, for the coach.
+ *
+ * Nothing should be shown for it, so the download bubble is
+ * switched off for the moment of the save (`downloads.ui`), and the entry is
+ * erased from chrome://downloads afterwards. The file itself stays.
+ */
+async function saveSnapshot() {
+  const at = new Date();
+  const snapshot = buildSnapshot(await chrome.tabs.query({}), at);
+  const url = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(snapshot))}`;
+
+  await chrome.downloads.setUiOptions({ enabled: false });
+  try {
+    const id = await chrome.downloads.download({
+      url,
+      filename: snapshotFilename(at),
+      conflictAction: 'overwrite',
+      saveAs: false,
+    });
+    const state = await downloadFinished(id);
+    await chrome.downloads.erase({ id });
+    return { ok: state === 'complete', state, tabs: snapshot.tabs.length, file: snapshotFilename(at) };
+  } finally {
+    await chrome.downloads.setUiOptions({ enabled: true });
+  }
+}
+
+async function fireSnapshot() {
+  try {
+    const outcome = await saveSnapshot();
+    if (!outcome.ok) console.error('[tab-triage] snapshot not saved', outcome);
+  } catch (error) {
+    console.error('[tab-triage] snapshot failed', error);
+  } finally {
+    await scheduleSnapshot();
+  }
 }
 
 /**
@@ -212,12 +283,14 @@ async function restoreBadge() {
 
 chrome.runtime.onInstalled.addListener(async () => {
   await scheduleDigest();
+  await scheduleSnapshot();
   await restoreBadge();
   chrome.runtime.openOptionsPage();
 });
 
 chrome.runtime.onStartup.addListener(async () => {
   await scheduleDigest();
+  await scheduleSnapshot();
   await restoreBadge();
 });
 
@@ -226,6 +299,7 @@ restoreBadge();
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === DIGEST_ALARM) fireDigest();
+  if (alarm.name === SNAPSHOT_ALARM) fireSnapshot();
 });
 
 /**
@@ -332,6 +406,11 @@ const handlers = {
     await chrome.windows.update(tab.windowId, { focused: true });
     await chrome.tabs.update(tabId, { active: true });
     return { ok: true };
+  },
+
+  /** For checking the coach's snapshot by hand: chrome.runtime.sendMessage({type: 'saveSnapshotNow'}). */
+  async saveSnapshotNow() {
+    return saveSnapshot();
   },
 
   async runDigestNow() {

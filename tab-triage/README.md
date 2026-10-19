@@ -32,6 +32,24 @@ used rather than granted up front.
   Markdown table: the title linked to its URL, site, task, minutes, words, media length,
   days idle, and whether it is stale or a duplicate.
 
+## Nightly snapshot for the coach
+
+At 22:15 every night the extension saves `~/Downloads/tab-triage/YYYY-MM-DD.json`:
+the title and URL of every open tab, with pinned tabs and browser pages left
+out. The coach (`projects/coach`) reads it at 22:25 and tells its evening digest
+which tabs have been open three days or more. Nothing else is in the file: no
+estimates, no page text.
+
+- **Nothing is shown.** The download bubble is turned off for the moment of the
+  save (`downloads.ui`), and the entry is erased from `chrome://downloads`.
+- **`~/Downloads/tab-triage` must be a symlink** to `projects/coach/tabs/inbox`.
+  Chrome can only save under Downloads, and macOS blocks the coach's launchd job
+  from reading Downloads. The coach's `bin/preflight.sh` checks the link.
+- **The time is fixed** in `SNAPSHOT_TIME` in `src/background.js`, ten minutes
+  before the coach's export. Change both together.
+- To save one by hand, run `chrome.runtime.sendMessage({type: 'saveSnapshotNow'})`
+  in the dashboard's DevTools console.
+
 ## Two estimators
 
 | | Local heuristics (default) | Claude |
@@ -246,6 +264,8 @@ Requested up front:
 - `alarms` — schedule the morning digest.
 - `notifications` — deliver it.
 - `scripting` — inject the page reader on demand (only fires with the permission below).
+- `downloads` — save the nightly snapshot for the coach.
+- `downloads.ui` — hide the download bubble while it saves, so nothing appears each night.
 
 Requested only when you turn the feature on, from the Settings page:
 

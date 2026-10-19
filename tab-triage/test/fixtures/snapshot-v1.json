@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "takenAt": "2026-10-19T14:15:00.000Z",
+  "tabs": [
+    { "url": "https://jobs.wise.com/1", "title": "Senior SWE" },
+    { "url": "https://leetcode.com/problems/divide-two-integers/", "title": "29. Divide Two Integers" }
+  ]
+}
