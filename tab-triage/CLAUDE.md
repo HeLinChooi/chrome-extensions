@@ -26,3 +26,13 @@ coach in the same session.
 The `downloads` and `downloads.ui` permissions exist only for this snapshot.
 `downloads.ui` hides the download bubble, so that nothing appears
 each night.
+
+## Versions
+
+Bump the version on every change that will be reloaded, so `chrome://extensions`
+shows which build is running. Reloading loads new code even when the number
+is unchanged, so without a bump nothing on screen says the reload took.
+Three places must agree: `public/manifest.json`, `package.json` and
+`package-lock.json`. `npm version X.Y.Z --no-git-tag-version` updates the last
+two; edit the manifest by hand. Minor for a feature or a new permission, patch
+for a fix.
