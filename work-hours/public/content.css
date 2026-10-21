@@ -1,0 +1,13 @@
+/* The shop's own styles must not change the badge, so every property is set. */
+.work-hours-badge {
+  display: inline-block !important;
+  margin: 0 0 0 6px !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  font: 600 12px/1.5 system-ui, -apple-system, sans-serif !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  vertical-align: middle !important;
+}

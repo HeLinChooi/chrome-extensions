@@ -10,6 +10,7 @@ with its own build, tests and README.
 | [Dark Mode](dark-mode/) | Turns websites dark with the Dark Reader engine. Each site can be dark or light by its own choice. |
 | [LeetCode Cheer](leetcode-cheer/) | Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted. |
 | [Break Reminder](break-reminder/) | Reminds you to take a break after 30 minutes of screen time, measured from keyboard and mouse input across the whole computer. |
+| [Work Hours](work-hours/) | Shows each price on Shopee, Lazada and Zalora, in Malaysia and Singapore, as the hours of work it costs, from your monthly take-home pay. |
 | [Highlight](highlight/) | Highlights selected text in yellow with Cmd+click (Ctrl+click on Windows). Highlights are saved per page and come back when you revisit it. |
 
 ## Shared setup
