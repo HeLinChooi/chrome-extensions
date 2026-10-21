@@ -20,6 +20,9 @@ is a new version written for ringgit.
   discount, and nobody pays them.
 - **Prices that load later get a badge too**, such as more results while
   scrolling.
+- **An on/off switch** at the top of the popup, "Show the hours on shop
+  pages". Turning it off removes every badge from open shop tabs at once, and
+  turning it on brings them back, with no reload.
 
 ## How the time is worked out
 

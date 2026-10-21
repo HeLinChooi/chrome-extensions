@@ -17,6 +17,7 @@ function render(settings) {
   const example = { low: EXAMPLE_PRICE, high: EXAMPLE_PRICE, currency: settings.payCurrency };
   $('symbol').textContent = symbol;
   $('payCurrency').value = settings.payCurrency;
+  $('enabled').checked = settings.enabled;
   $('rate').textContent = rate === null ? 'Enter your pay' : `${symbol} ${rate.toFixed(2)}`;
   $('example').textContent =
     rate === null ? '' : `${symbol}${EXAMPLE_PRICE.toFixed(2)} on Shopee shows "${workLabel(example, settings)}".`;
@@ -26,6 +27,7 @@ function render(settings) {
 
 async function saveSettings() {
   const settings = await load();
+  settings.enabled = $('enabled').checked;
   settings.payCurrency = $('payCurrency').value;
   for (const key of NUMBERS) {
     const input = $(key);
@@ -38,6 +40,7 @@ async function saveSettings() {
 // 'input', not 'change': closing the popup does not fire 'change', so the pay would be lost.
 for (const key of NUMBERS) $(key).addEventListener('input', saveSettings);
 $('payCurrency').addEventListener('change', saveSettings);
+$('enabled').addEventListener('change', saveSettings);
 
 chrome.storage.onChanged.addListener(async () => render(await load()));
 render(await load());

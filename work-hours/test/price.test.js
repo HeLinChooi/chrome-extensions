@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { parsePrice, hourlyPay, workMinutes, formatWork, workLabel, toPayCurrency, currencyForHost } from '../src/lib/price.js';
 
 // RM 5,000 a month over 40 hours a week is about RM 28.85 an hour.
-const settings = { monthlyPay: 5000, payCurrency: 'MYR', hoursPerWeek: 40, sgdToMyr: 3.2 };
+const settings = { enabled: true, monthlyPay: 5000, payCurrency: 'MYR', hoursPerWeek: 40, sgdToMyr: 3.2 };
 
 test('parses a plain ringgit price', () => {
   assert.deepEqual(parsePrice('RM49.90'), { low: 49.9, high: 49.9, currency: 'MYR' });
@@ -123,4 +123,8 @@ test('the label for a Singapore price with Singapore pay', () => {
 
 test('no label until a monthly pay is entered', () => {
   assert.equal(workLabel({ low: 49.9, high: 49.9, currency: 'MYR' }, { ...settings, monthlyPay: null }), null);
+});
+
+test('no label when the hours are turned off', () => {
+  assert.equal(workLabel({ low: 49.9, high: 49.9, currency: 'MYR' }, { ...settings, enabled: false }), null);
 });

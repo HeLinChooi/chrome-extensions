@@ -26,3 +26,4 @@ h2 { font-size: 13px; margin: 16px 0 6px; }
 .row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
 .row input { width: 80px; }
 .hint { margin: 0 0 8px; font-size: 12px; }
+.check { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-weight: 600; }

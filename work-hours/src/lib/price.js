@@ -4,10 +4,10 @@
  */
 
 /**
- * Monthly pay is take-home pay, after EPF or CPF and tax, in `payCurrency`. Empty until the
+ * `enabled` is the popup's on/off switch for the badges. Monthly pay is take-home pay, after EPF or CPF and tax, in `payCurrency`. Empty until the
  * user enters it. `sgdToMyr` is ringgit per Singapore dollar, 3.19 on 21 Oct 2026.
  */
-export const DEFAULT_SETTINGS = { monthlyPay: null, payCurrency: 'MYR', hoursPerWeek: 40, sgdToMyr: 3.19 };
+export const DEFAULT_SETTINGS = { enabled: true, monthlyPay: null, payCurrency: 'MYR', hoursPerWeek: 40, sgdToMyr: 3.19 };
 
 const WEEKS_PER_MONTH = 52 / 12;
 const WORK_DAYS_PER_WEEK = 5;
@@ -71,9 +71,9 @@ export function formatWork(minutes, hoursPerWeek) {
   return `${days < 10 ? days.toFixed(1) : Math.round(days)} days`;
 }
 
-/** The text shown beside a price, or null when there is no pay to measure against. */
+/** The text shown beside a price, or null when the badges are off or there is no pay to measure against. */
 export function workLabel({ low, high, currency }, settings) {
-  if (hourlyPay(settings) === null) return null;
+  if (!settings.enabled || hourlyPay(settings) === null) return null;
   const format = (amount) =>
     formatWork(workMinutes(toPayCurrency(amount, currency, settings), settings), settings.hoursPerWeek);
   const time = low === high ? format(low) : `${format(low)} – ${format(high)}`;
