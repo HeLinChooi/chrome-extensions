@@ -25,9 +25,27 @@ Transcribing a 10-second piece takes under 2 seconds with the model loaded.
 **Tests**: `test/word-errors.test.js`. `npm run listen-test` on Coin's voice.
 A computer voice (`say`) gave 3.4% wrong words with the prompt, 5.4% without.
 Speed, measured on the M3 Pro: a 10-second clip took 1.45 s, of which 0.43 s
-was loading the model. So the speed criterion passes; accuracy on Coin's
-voice is still unmeasured.
-**Status**: In Progress. Waiting for Coin's recording.
+was loading the model.
+
+**Result on Coin's voice (22 Oct 2026), 52 s of audio:**
+
+| Model | Wrong words | Time |
+|---|---|---|
+| large-v3-turbo, plain | 11 (7.5%) | 2.9 s |
+| large-v3-turbo, with prompt | 13 (8.8%) | 3.2 s |
+| large-v3, plain | 23 (15.6%) | 7.0 s |
+| large-v3, with prompt | 25 (17.0%) | 6.8 s |
+
+The 5% criterion failed, but the count overstates the problem. With
+large-v3-turbo, every interview term was right. Most errors were word forms
+("indexes", "square"). Coin thinks he read "valid" and "indexes" himself,
+and both models agree on those. One error changed the meaning: "If it is, I
+return both indices" became "I store both indexes". large-v3 dropped most
+Big O phrases, and the prompt made both models drop words.
+
+**Decision**: large-v3-turbo, with no prompt. Stage 3 must treat the
+transcript as possibly wrong (see there).
+**Status**: Complete
 
 ## Stage 2: Extension shell
 **Goal**: A side panel on `leetcode.com/problems/*`.
@@ -44,6 +62,9 @@ he asks it something; he is silent for about 60 seconds (adjustable); he
 starts coding before stating an approach and its complexity; or he says
 something wrong, such as a wrong Big O. It always gets the code and the speech
 together. Hints come in steps, from small to large, and each one is recorded.
+The transcript can be wrong (Stage 1 measured 7.5% wrong words). When Coin's
+speech contradicts his code, the interviewer asks what he meant ("valid or
+invalid?"). It never marks him wrong on the transcript alone.
 **Tests**: A scripted mock with each of the four triggers, and one where it
 must stay quiet. Check model IDs and prices with the `claude-api` skill before
 choosing a model.
