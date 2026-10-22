@@ -1,0 +1,11 @@
+{
+  "name": "photo-cleaner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension that loads Google Photos Toolkit on photos.google.com, as the base for an AI photo cleanup tool.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.js"
+  }
+}

@@ -11,12 +11,13 @@ with its own build, tests and README.
 | [LeetCode Cheer](leetcode-cheer/) | Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted. |
 | [Break Reminder](break-reminder/) | Reminds you to take a break after 30 minutes of screen time, measured from keyboard and mouse input across the whole computer. |
 | [Work Hours](work-hours/) | Shows each price on Shopee, Lazada and Zalora, in Malaysia and Singapore, as the hours of work it costs, from your monthly take-home pay. |
+| [Photo Cleaner](photo-cleaner/) | Loads Google Photos Toolkit on photos.google.com without Tampermonkey. The first stage of an AI tool for cleaning up a Google Photos library. |
 | [Highlight](highlight/) | Highlights selected text in yellow with Cmd+click (Ctrl+click on Windows). Highlights are saved per page and come back when you revisit it. |
 
 ## Shared setup
 
 All of them use Manifest V3 and plain JavaScript. All except Highlight also use
-esbuild and `node --test`. In any of those folders:
+`node --test`, and all except Highlight and Photo Cleaner use esbuild. In any of those folders:
 
 ```bash
 npm install
