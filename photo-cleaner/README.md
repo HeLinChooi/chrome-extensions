@@ -9,10 +9,11 @@ Tampermonkey. This extension loads it without one, so no userscript manager
 needs access to every site.
 
 On top of the Toolkit, it sends each photo's thumbnail to Claude, which marks it
-"keep" or "delete" with a short reason. The "delete" photos go into a new album
-named "Review – <day>". **Nothing is moved to the bin.** You open the album in
-the Google Photos app, take out what you want to keep, and delete the rest from
-there.
+"keep" or "delete" with a short reason. A review panel then shows each "delete"
+photo as a card, with the photo kept instead beside it for a near-copy. You
+untick what you want to keep, and the ticked photos go into a new album named
+"Review – <day>". **Nothing is moved to the bin.** You delete from that album
+in the Google Photos app.
 
 ## Use
 
@@ -21,14 +22,20 @@ there.
 2. On photos.google.com, open the DevTools console (Cmd+Option+J):
 
    ```js
-   await photoCleaner.run({ uploadedOn: '2026-10-22', dryRun: true })  // table only
-   await photoCleaner.run({ uploadedOn: '2026-10-22' })                // also makes the album
+   await photoCleaner.run({ uploadedOn: '2026-10-22' })
    ```
 
-   Without `uploadedOn` it checks the whole library. Videos are skipped.
+   Without `uploadedOn` it checks the whole library. Videos are skipped. When
+   it finishes, the review panel opens. The album is made only when you click
+   its button.
 
 A thumbnail fits within 384 × 384 pixels, about 196 input tokens. Photos go in
 batches of 20, one batch at a time, so neighbouring near-copies are seen together.
+A group of near-copies that crosses a batch boundary is judged as two groups.
+
+The rules Claude is given (`src/lib/classify.js`): delete a near-copy in a group
+of 2 or 3 only when another is clearly better; in a group of 4 or more, keep the
+best 2. Keep anything in doubt. On the first test, 98 photos cost about US$0.004.
 
 ## What it can reach
 

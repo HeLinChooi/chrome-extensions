@@ -27,7 +27,17 @@ Learned in this stage:
 **Goal**: Thumbnails go to Claude, and photos marked "probably delete" go into the Review album with a reason.
 **Success Criteria**: Run on the 102 test photos, with the cost measured.
 **Tests**: `test/classify.test.js`: batching, the request content, and parsing the answer (skipped or unknown verdicts are kept).
-**Status**: In Progress. Built on 22 Oct 2026 and unit-tested; not yet run against Claude. The key lives in the background worker, as in Tab Triage. The script makes the Review album only; deleting is done by hand in the app.
+**Status**: In Progress. The key lives in the background worker, as in Tab Triage. The script makes the Review album only; deleting is done by hand in the app.
+
+First run, 22 Oct 2026, 98 photos: 31 marked delete, 18,051 tokens in and 3,652 out (about US$0.004). Coin's feedback, applied in 0.3.0:
+- "Equally good" near-copies were deleted. Now a group of 2 or 3 loses one only if another is clearly better, and a group of 4 or more keeps the best 2.
+- Reasons named "photo 8", a number Coin cannot see, and a timestamp was not enough either. Now a review panel shows each photo with the one kept instead.
+- Upside-down photos are correctly marked delete.
+
+Next: run 0.3.0 on the same day and compare.
+
+## Later: unsure photos to Lightroom
+Coin has 1 TB of Lightroom cloud storage. Photos that are neither clearly good nor clearly bad could be copied there before he decides. Not designed yet; first check what Adobe offers for uploading.
 
 ## Stage 4: Run on the main account
 **Goal**: One month of the main library at a time.

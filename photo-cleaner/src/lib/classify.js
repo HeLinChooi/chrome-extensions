@@ -19,8 +19,9 @@ export const RESPONSE_SCHEMA = {
           index: { type: 'integer', description: 'The photo number given before the image' },
           verdict: { type: 'string', enum: ['keep', 'delete'] },
           reason: { type: 'string', description: 'At most 10 words' },
+          better: { type: 'integer', description: 'For a deleted near-copy, the number of the photo kept instead; otherwise -1' },
         },
-        required: ['index', 'verdict', 'reason'],
+        required: ['index', 'verdict', 'reason', 'better'],
         additionalProperties: false,
       },
     },
@@ -35,15 +36,23 @@ export const SYSTEM_PROMPT = [
   '',
   'Mark "delete" only when the photo is clearly not worth keeping:',
   '- badly blurred, or almost black or white;',
-  '- taken by accident: a pocket, a floor, a finger over the lens;',
-  '- a near-copy of a neighbouring photo that is no better (keep the best one of the group);',
+  '- taken by accident: a pocket, a floor, a finger over the lens, upside down;',
+  '- a near-copy that the rules below allow to go;',
   '- a screenshot, or a photo of a receipt, a form or a screen, that looks done with.',
+  '',
+  'Near-copies are photos of the same people, pose and framing, taken moments apart.',
+  '- In a group of 2 or 3, delete one only if another in the group is clearly better:',
+  '  sharper, eyes open, nobody blocking a face. If they are about equally good, keep them all.',
+  '- In a group of 4 or more, keep the best 2 and delete the rest.',
+  'For a deleted near-copy, set "better" to the number of the photo kept instead.',
+  'Otherwise set "better" to -1.',
   '',
   'Mark "keep" when in doubt. Family, friends, events and places are kept unless one of the',
   'reasons above clearly applies. A wrongly kept photo costs nothing; a wrongly deleted one',
   'is a memory lost.',
   '',
-  'The reason is at most 10 words, for example "blurred" or "near-copy of photo 4, which is sharper".',
+  'The reason is at most 10 words and never names a photo number, because the person',
+  'cannot see the numbers. For example: "blurred", or "near-copy; the other one is sharper".',
 ].join('\n');
 
 /** Splits a list into consecutive groups of `size`. */
@@ -70,14 +79,18 @@ export function buildUserContent(photos) {
 /**
  * Turns Claude's JSON answer into one verdict per photo, in input order.
  * A photo Claude skipped, or gave an unknown verdict, is kept.
+ * `better` is the index of the photo kept instead, or -1 when there is none.
  */
 export function parseVerdicts(text, count) {
   const byIndex = new Map(JSON.parse(text).photos.map((row) => [row.index, row]));
   return Array.from({ length: count }, (_, index) => {
     const row = byIndex.get(index);
     if (!row || (row.verdict !== 'keep' && row.verdict !== 'delete')) {
-      return { verdict: 'keep', reason: 'no answer from Claude' };
+      return { verdict: 'keep', reason: 'no answer from Claude', better: -1 };
     }
-    return { verdict: row.verdict, reason: row.reason };
+    const better = Number.isInteger(row.better) && row.better >= 0 && row.better < count && row.better !== index
+      ? row.better
+      : -1;
+    return { verdict: row.verdict, reason: row.reason, better };
   });
 }

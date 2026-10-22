@@ -1,6 +1,6 @@
 {
   "name": "photo-cleaner",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Chrome extension that asks Claude which Google Photos are probably not worth keeping, and puts them in a Review album.",
   "type": "module",

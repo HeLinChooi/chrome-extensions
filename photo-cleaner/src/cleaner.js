@@ -2,14 +2,16 @@
  * Runs in the page, next to the Toolkit. From the DevTools console:
  *
  *   await photoCleaner.run({ uploadedOn: '2026-10-22' })   // one upload day
- *   await photoCleaner.run({ dryRun: true })                // whole library, no album
+ *   await photoCleaner.run()                                // whole library
  *
- * It sends each photo's thumbnail to Claude, prints a table of verdicts, and puts
- * the "delete" photos into a new album named "Review – <label>". It never moves
- * anything to the bin: the user reviews the album and deletes from it in Google's app.
+ * It sends each photo's thumbnail to Claude, then opens a review panel of the
+ * photos marked "delete". The ticked ones go into a new album named
+ * "Review – <label>". It never moves anything to the bin: the user deletes
+ * from that album in Google's app.
  */
 
 import { BATCH_SIZE, toBatches } from './lib/classify.js';
+import { showReviewPanel } from './review-panel.js';
 
 const THUMB_SIZE = '=w384-h384'; // fits within 384 × 384, about 196 image tokens
 
@@ -59,7 +61,17 @@ function classifyBatch(photos) {
   });
 }
 
-async function run({ uploadedOn = null, dryRun = false } = {}) {
+async function addToAlbum(items, albumName) {
+  window.gptkCore.isProcessRunning = true; // the Toolkit's helpers do nothing without it
+  try {
+    await window.gptkApiUtils.addToNewAlbum(items, albumName);
+  } finally {
+    window.gptkCore.isProcessRunning = false;
+  }
+  console.log(`[Photo Cleaner] Added ${items.length} photos to the album "${albumName}".`);
+}
+
+async function run({ uploadedOn = null } = {}) {
   const all = await listItems(uploadedOn);
   // Videos are skipped: a thumbnail shows one frame, which says little about the video.
   const photos = all.filter((item) => !item.duration).sort((a, b) => a.timestamp - b.timestamp);
@@ -75,7 +87,10 @@ async function run({ uploadedOn = null, dryRun = false } = {}) {
     const answer = await classifyBatch(thumbs);
     usage.input_tokens += answer.usage.input_tokens;
     usage.output_tokens += answer.usage.output_tokens;
-    batch.forEach((item, i) => results.push({ item, ...answer.verdicts[i] }));
+    batch.forEach((item, i) => {
+      const { better, ...verdict } = answer.verdicts[i];
+      results.push({ item, ...verdict, betterItem: better >= 0 ? batch[better] : null });
+    });
   }
 
   const toReview = results.filter((r) => r.verdict === 'delete');
@@ -87,17 +102,11 @@ async function run({ uploadedOn = null, dryRun = false } = {}) {
   console.log(`[Photo Cleaner] ${toReview.length} of ${results.length} marked delete.`,
     `Tokens: ${usage.input_tokens} in, ${usage.output_tokens} out.`);
 
-  if (!dryRun && toReview.length) {
-    const albumName = `Review – ${uploadedOn ?? 'all'}`;
-    window.gptkCore.isProcessRunning = true; // the Toolkit's helpers do nothing without it
-    try {
-      await window.gptkApiUtils.addToNewAlbum(toReview.map((r) => r.item), albumName);
-    } finally {
-      window.gptkCore.isProcessRunning = false;
-    }
-    console.log(`[Photo Cleaner] Added ${toReview.length} photos to the album "${albumName}".`);
-  }
   window.photoCleaner.last = results;
+  if (toReview.length) {
+    const albumName = `Review – ${uploadedOn ?? 'all'}`;
+    showReviewPanel(toReview, albumName, (items) => addToAlbum(items, albumName));
+  }
   return { checked: results.length, markedDelete: toReview.length, usage };
 }
 
