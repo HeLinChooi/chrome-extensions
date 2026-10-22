@@ -60,7 +60,7 @@ export function showReviewPanel(toReview, albumName, onConfirm) {
   const header = el('div', 'display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #ddd;flex-wrap:wrap');
   const title = el('div', 'flex:1;font-weight:600');
   const confirm = el('button', 'padding:8px 14px;border:0;border-radius:6px;background:#1a73e8;color:#fff;font-weight:600;cursor:pointer');
-  const close = el('button', 'padding:8px 14px;border:1px solid #bbb;border-radius:6px;background:#fff;cursor:pointer', 'Close');
+  const close = el('button', 'padding:8px 14px;border:1px solid #bbb;border-radius:6px;background:#fff;color:#222;font:14px system-ui,sans-serif;cursor:pointer', 'Close');
   header.append(title, confirm, close);
 
   const grid = el('div', 'flex:1;overflow:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;align-content:start');
