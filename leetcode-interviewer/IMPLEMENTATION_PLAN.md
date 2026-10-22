@@ -90,7 +90,16 @@ choosing a model.
 - `whisper-server` keeps the model loaded: 0.86 s for a 10 s clip.
 - Each call is one stateless request: the system prompt and the problem are
   cached, and the transcript, code and event follow.
-**Status**: In Progress. Built; Claude call untested until the API key exists.
+- The API key file is a copy of `ANTHROPIC_API_KEY` from
+  `~/helin-openclaw/openclaw/.env` (Coin chose to share the travel bot's key).
+  If that key is rotated, copy it again (README, "The API key").
+**Dry run (22 Oct 2026)**, Coin's passage recording as a `turn-end`: the first
+call took 5.4 s and wrote 1,820 tokens to the cache; the second took 2.3 s
+and read them from the cache. Each call used 296 new input tokens and 100 to
+200 output tokens. Both replies answered his clarifying questions; the
+second also asked whether the sorted sliding window keeps the original
+indexes, without giving the answer.
+**Status**: In Progress. Waiting for Coin's first live mock.
 
 ## Stage 4: Scorecard
 **Goal**: A scorecard on the four rubric categories (problem solving, coding,
