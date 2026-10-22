@@ -20,6 +20,18 @@ curl -L -o ~/.local/share/whisper/ggml-large-v3-turbo.bin \
 The model is 1.6 GB. Its SHA-256 is
 `1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69`.
 
+## The extension
+
+```bash
+npm install
+npm run build
+```
+
+Load `dist/` with **Load unpacked** in `chrome://extensions`. Open a LeetCode
+problem and click the toolbar icon: the side panel opens. For now it shows the
+problem title, the language and your code, and updates about once a second as
+you type.
+
 ## Listening test
 
 ```bash

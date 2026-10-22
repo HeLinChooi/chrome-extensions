@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode Interviewer",
+  "version": "0.1.0",
+  "description": "A mock interviewer that listens while you solve a LeetCode problem out loud.",
+  "permissions": ["sidePanel"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/problems/*"],
+      "js": ["page.js"],
+      "world": "MAIN",
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://leetcode.com/problems/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "LeetCode Interviewer"
+  }
+}

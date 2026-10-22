@@ -1,2 +1,5 @@
+node_modules/
+dist/
+.DS_Store
 # Recordings of Coin's voice and their transcripts. Never commit them: the repo is public.
 server/recordings/
