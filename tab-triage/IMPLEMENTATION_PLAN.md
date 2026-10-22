@@ -40,8 +40,10 @@ file; preflight checks the snapshot is fresh; both READMEs and the coach
 a save dialog every night, because "Ask where to save each file" is on. The
 extension (0.3.0) now sends the snapshot by native messaging to
 `coach/bin/tab-snapshot-host`, which writes `tabs/inbox/<day>.json`.
-**Next**: reload the extension, run `saveSnapshotNow`, see the file appear
-with no dialog.
+**Verified 2026-10-23 00:03**: after reloading 0.3.0, `saveSnapshotNow` from the
+dashboard console wrote `tabs/inbox/2026-10-23.json` (28 tabs), with no dialog.
+**Next**: the 22:15 alarm on its own, then the 22:25 `coach tabs` run, then the
+23:30 digest mentioning an old tab or saying nothing about tabs.
 **Added**: `CLAUDE.md` here and a shared fixture,
 `test/fixtures/snapshot-v1.json`, read by both test suites. Two missing nights
 write a warning line for the digest.
