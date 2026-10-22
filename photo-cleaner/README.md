@@ -26,8 +26,9 @@ in the Google Photos app.
    ```
 
    Without `uploadedOn` it checks the whole library. Videos are skipped. When
-   it finishes, the review panel opens. The album is made only when you click
-   its button.
+   it finishes, the review panel opens. Click a photo for a large preview.
+   The album is made only when you click the panel's button. If the panel
+   closes, `photoCleaner.review()` reopens it with the ticks kept.
 
 A thumbnail fits within 384 × 384 pixels, about 196 input tokens. Photos go in
 batches of 20, one batch at a time, so neighbouring near-copies are seen together.

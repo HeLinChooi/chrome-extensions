@@ -103,11 +103,30 @@ async function run({ uploadedOn = null } = {}) {
     `Tokens: ${usage.input_tokens} in, ${usage.output_tokens} out.`);
 
   window.photoCleaner.last = results;
-  if (toReview.length) {
-    const albumName = `Review – ${uploadedOn ?? 'all'}`;
-    showReviewPanel(toReview, albumName, (items) => addToAlbum(items, albumName));
-  }
+  toReview.forEach((r) => { r.ticked = true; });
+  reviewState = { toReview, albumName: `Review – ${uploadedOn ?? 'all'}` };
+  review();
   return { checked: results.length, markedDelete: toReview.length, usage };
 }
 
-window.photoCleaner = { run, last: null };
+let reviewState = null;
+
+/** Opens the review panel for the last run again, with the ticks as they were. */
+function review() {
+  if (!reviewState?.toReview.length) {
+    console.log('[Photo Cleaner] Nothing to review. Run photoCleaner.run() first.');
+    return;
+  }
+  if (reviewState.added) {
+    // A second click would make a second album with the same name.
+    console.log(`[Photo Cleaner] Already added to "${reviewState.albumName}". Run photoCleaner.run() for a new review.`);
+    return;
+  }
+  const { toReview, albumName } = reviewState;
+  showReviewPanel(toReview, albumName, async (items) => {
+    await addToAlbum(items, albumName);
+    reviewState.added = true;
+  });
+}
+
+window.photoCleaner = { run, review, last: null };
