@@ -61,8 +61,9 @@ read the Monaco editor's content. Everything later depends on this.
   returned the slug, title, language and code on request, and pushed a new
   snapshot after typing. Headless Chromium gets Cloudflare's "Just a
   moment..." page, so a check like this needs a visible window.
-- Not yet seen: the panel on screen, in Coin's Chrome.
-**Status**: In Progress. Waiting for Coin to load it and open the panel.
+- 22 Oct 2026, Coin's Chrome: the panel showed the title, language and code,
+  and updated as he typed.
+**Status**: Complete
 
 ## Stage 3: Interviewer
 **Goal**: Microphone → `whisper-server` (model stays loaded) → Claude → panel.
