@@ -13,6 +13,7 @@ with its own build, tests and README.
 | [Work Hours](work-hours/) | Shows each price on Shopee, Lazada and Zalora, in Malaysia and Singapore, as the hours of work it costs, from your monthly take-home pay. |
 | [Photo Cleaner](photo-cleaner/) | Loads Google Photos Toolkit on photos.google.com without Tampermonkey. The first stage of an AI tool for cleaning up a Google Photos library. |
 | [Highlight](highlight/) | Highlights selected text in yellow with Cmd+click (Ctrl+click on Windows). Highlights are saved per page and come back when you revisit it. |
+| [LeetCode Interviewer](leetcode-interviewer/) | Work in progress. A mock interviewer that listens while you solve a LeetCode problem out loud, reads your code, and replies in text. Speech to text runs on your Mac with Whisper. |
 
 ## Shared setup
 

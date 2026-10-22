@@ -1,0 +1,11 @@
+{
+  "name": "leetcode-interviewer",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A mock interviewer that listens while you solve a LeetCode problem out loud.",
+  "type": "module",
+  "scripts": {
+    "listen-test": "node server/listen-test.js",
+    "test": "node --test test/*.test.js"
+  }
+}

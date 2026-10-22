@@ -2,6 +2,12 @@
 
 Each folder is a separate Chrome extension. The README lists them.
 
+The repo is public. `leetcode-interviewer/` also has a local server
+(`server/`) that records Coin's voice and will hold a Claude API key. Keep
+recordings, transcripts and keys out of the repo: recordings go in the
+ignored `server/recordings/`, scorecards go to the knowledge-base repo, and
+the key stays in a file outside the repo.
+
 ## Versions
 
 Bump an extension's version on every fix or change, before Coin reloads it.
