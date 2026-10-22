@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Tab Triage",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Estimates how long it would take to clear your open tabs, groups them by site and task, and delivers a morning digest.",
-  "permissions": ["tabs", "storage", "alarms", "notifications", "scripting", "downloads", "downloads.ui"],
+  "permissions": ["tabs", "storage", "alarms", "notifications", "scripting", "nativeMessaging"],
   "optional_host_permissions": ["https://api.anthropic.com/*", "<all_urls>"],
   "background": {
     "service_worker": "background.js",

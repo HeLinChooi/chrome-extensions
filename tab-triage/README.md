@@ -34,17 +34,22 @@ used rather than granted up front.
 
 ## Nightly snapshot for the coach
 
-At 22:15 every night the extension saves `~/Downloads/tab-triage/YYYY-MM-DD.json`:
+At 22:15 every night the extension sends a tab snapshot to the coach, which
+saves it as `projects/coach/tabs/inbox/YYYY-MM-DD.json`:
 the title and URL of every open tab, with pinned tabs and browser pages left
 out. The coach (`projects/coach`) reads it at 22:25 and tells its evening digest
 which tabs have been open three days or more. Nothing else is in the file: no
 estimates, no page text.
 
-- **Nothing is shown.** The download bubble is turned off for the moment of the
-  save (`downloads.ui`), and the entry is erased from `chrome://downloads`.
-- **`~/Downloads/tab-triage` must be a symlink** to `projects/coach/tabs/inbox`.
-  Chrome can only save under Downloads, and macOS blocks the coach's launchd job
-  from reading Downloads. The coach's `bin/preflight.sh` checks the link.
+- **It is not a download.** The extension calls
+  `chrome.runtime.sendNativeMessage('com.coach.tab_snapshot', snapshot)`. Chrome
+  starts the coach's `bin/tab-snapshot-host`, which writes the file. A download
+  would open a save dialog every night, because "Ask where to save each file"
+  is on in Chrome. A native message shows nothing.
+- **The host must be registered once**, with `projects/coach/bin/install-tab-host.sh`.
+  It lets only this extension's ID talk to the host. An unpacked extension's ID
+  comes from its folder, so run it again if the folder moves. The coach's
+  `bin/preflight.sh` checks the registration.
 - **The time is fixed** in `SNAPSHOT_TIME` in `src/background.js`, ten minutes
   before the coach's export. Change both together.
 - To save one by hand, run `chrome.runtime.sendMessage({type: 'saveSnapshotNow'})`
@@ -264,8 +269,7 @@ Requested up front:
 - `alarms` — schedule the morning digest.
 - `notifications` — deliver it.
 - `scripting` — inject the page reader on demand (only fires with the permission below).
-- `downloads` — save the nightly snapshot for the coach.
-- `downloads.ui` — hide the download bubble while it saves, so nothing appears each night.
+- `nativeMessaging` — hand the nightly snapshot to the coach's program on the Mac.
 
 Requested only when you turn the feature on, from the Settings page:
 

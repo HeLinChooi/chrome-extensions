@@ -10,13 +10,16 @@ import { getSettings, getLastReport, parseTimeOfDay, nextOccurrence, DEFAULTS } 
 import { headline, subhead, formatMinutes } from './lib/format.js';
 import { createCancelToken } from './lib/async.js';
 import { matchLiveTabs } from './lib/match.js';
-import { buildSnapshot, snapshotFilename } from './lib/snapshot.js';
+import { buildSnapshot } from './lib/snapshot.js';
 
 const DIGEST_ALARM = 'morning-digest';
 const SNAPSHOT_ALARM = 'tab-snapshot';
-// Ten minutes before the coach's 22:25 export on the host, which moves the
-// file into the coach's folder. Change both together.
+// Ten minutes before the coach's 22:25 export on the host, which reads the
+// file the snapshot host wrote. Change both together.
 const SNAPSHOT_TIME = { hours: 22, minutes: 15 };
+// Chrome's name for the coach's bin/tab-snapshot-host. The coach's
+// bin/install-tab-host.sh registers it under this name.
+const SNAPSHOT_HOST = 'com.coach.tab_snapshot';
 
 /**
  * The run currently in flight, if any. A run can take a while when page reading
@@ -106,52 +109,18 @@ async function scheduleSnapshot() {
   await chrome.alarms.create(SNAPSHOT_ALARM, { when: nextOccurrence(SNAPSHOT_TIME) });
 }
 
-/** Resolve when a download finishes or fails. A data: URL takes milliseconds. */
-function downloadFinished(id, timeoutMs = 10000) {
-  return new Promise((resolve) => {
-    const done = (state) => {
-      clearTimeout(timer);
-      chrome.downloads.onChanged.removeListener(listener);
-      resolve(state);
-    };
-    const listener = (delta) => {
-      if (delta.id !== id || !delta.state) return;
-      if (delta.state.current !== 'in_progress') done(delta.state.current);
-    };
-    const timer = setTimeout(() => done('timeout'), timeoutMs);
-    chrome.downloads.onChanged.addListener(listener);
-    chrome.downloads.search({ id }).then(([item]) => {
-      if (item && item.state !== 'in_progress') done(item.state);
-    });
-  });
-}
-
 /**
- * Save today's tab snapshot to Downloads/tab-triage/, for the coach.
+ * Hand today's tab snapshot to the coach's snapshot host, which writes
+ * tabs/inbox/<day>.json on this Mac.
  *
- * Nothing should be shown for it, so the download bubble is
- * switched off for the moment of the save (`downloads.ui`), and the entry is
- * erased from chrome://downloads afterwards. The file itself stays.
+ * Not a Chrome download: with "Ask where to save each file" on, a download
+ * opened a save dialog every night. A native message shows nothing.
+ * The host replies {ok, file} or {ok: false, error}.
  */
 async function saveSnapshot() {
-  const at = new Date();
-  const snapshot = buildSnapshot(await chrome.tabs.query({}), at);
-  const url = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(snapshot))}`;
-
-  await chrome.downloads.setUiOptions({ enabled: false });
-  try {
-    const id = await chrome.downloads.download({
-      url,
-      filename: snapshotFilename(at),
-      conflictAction: 'overwrite',
-      saveAs: false,
-    });
-    const state = await downloadFinished(id);
-    await chrome.downloads.erase({ id });
-    return { ok: state === 'complete', state, tabs: snapshot.tabs.length, file: snapshotFilename(at) };
-  } finally {
-    await chrome.downloads.setUiOptions({ enabled: true });
-  }
+  const snapshot = buildSnapshot(await chrome.tabs.query({}), new Date());
+  const reply = await chrome.runtime.sendNativeMessage(SNAPSHOT_HOST, snapshot);
+  return { ...reply, tabs: snapshot.tabs.length };
 }
 
 async function fireSnapshot() {

@@ -1,6 +1,6 @@
 {
   "name": "tab-triage",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Chrome extension that estimates how long it takes to clear your open tabs, groups them, and delivers a morning digest.",
   "type": "module",

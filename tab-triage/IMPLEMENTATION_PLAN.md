@@ -36,8 +36,12 @@ file; preflight checks the snapshot is fresh; both READMEs and the coach
 
 ## Stage 4: Verify for real
 **Status**: In Progress
-**Open question**: whether Chrome writes through the symlink. launchd can read
-`tabs/inbox` (tested 2026-10-19); Chrome's side needs the extension reloaded.
+**Changed 2026-10-22**: the Downloads symlink is gone. A Chrome download opened
+a save dialog every night, because "Ask where to save each file" is on. The
+extension (0.3.0) now sends the snapshot by native messaging to
+`coach/bin/tab-snapshot-host`, which writes `tabs/inbox/<day>.json`.
+**Next**: reload the extension, run `saveSnapshotNow`, see the file appear
+with no dialog.
 **Added**: `CLAUDE.md` here and a shared fixture,
 `test/fixtures/snapshot-v1.json`, read by both test suites. Two missing nights
 write a warning line for the digest.

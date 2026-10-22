@@ -1,9 +1,9 @@
 /**
  * The nightly tab snapshot read by the coach on the host.
  *
- * The coach runs in Docker and cannot see Chrome, so the extension saves one
- * small JSON file a day into Downloads, and the host's 22:25 export moves it
- * into the coach's folder. Only titles and URLs leave the extension: the coach
+ * The coach runs in Docker and cannot see Chrome, so once a day the extension
+ * sends one small JSON object to the coach's snapshot host on the Mac, which
+ * saves it as <date>.json for the host's 22:25 export. Only titles and URLs leave the extension: the coach
  * asks "how long has this tab been open", which estimates do not answer.
  *
  * Pure functions here; the Chrome calls are in background.js.
@@ -17,11 +17,6 @@ export const SNAPSHOT_VERSION = 1;
 export function localDate(at) {
   const pad = (n) => String(n).padStart(2, '0');
   return `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}`;
-}
-
-/** Relative to the Downloads folder. One file per day; a rerun overwrites it. */
-export function snapshotFilename(at) {
-  return `tab-triage/${localDate(at)}.json`;
 }
 
 /**

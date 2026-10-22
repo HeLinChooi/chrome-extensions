@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSnapshot, snapshotFilename, localDate } from '../src/lib/snapshot.js';
+import { buildSnapshot, localDate } from '../src/lib/snapshot.js';
 
 const at = new Date(2026, 9, 19, 22, 15, 0); // 19 Oct 2026, 22:15 local
 
@@ -8,10 +8,6 @@ test('localDate uses the local calendar day, not UTC', () => {
   // 00:30 local is still the previous day in UTC for any zone east of UTC.
   assert.equal(localDate(new Date(2026, 9, 20, 0, 30)), '2026-10-20');
   assert.equal(localDate(new Date(2026, 0, 5, 9, 0)), '2026-01-05');
-});
-
-test('snapshotFilename is one file per day under tab-triage/', () => {
-  assert.equal(snapshotFilename(at), 'tab-triage/2026-10-19.json');
 });
 
 test('buildSnapshot keeps only title and url', () => {
