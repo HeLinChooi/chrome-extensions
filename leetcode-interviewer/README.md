@@ -20,17 +20,42 @@ curl -L -o ~/.local/share/whisper/ggml-large-v3-turbo.bin \
 The model is 1.6 GB. Its SHA-256 is
 `1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69`.
 
-## The extension
+## The API key
+
+The server calls Claude (Sonnet 5.5) with your own API key. It reads the key
+from a file outside the repo. Copy the key from console.anthropic.com, then:
+
+```bash
+mkdir -p ~/.config/leetcode-interviewer && (umask 077; pbpaste > ~/.config/leetcode-interviewer/anthropic-key)
+```
+
+`pbpaste` writes the clipboard to the file, so the key never appears in a
+command line. `umask 077` makes the file readable only by you.
+
+## Running an interview
 
 ```bash
 npm install
-npm run build
+npm run build      # then load dist/ with Load unpacked in chrome://extensions
+npm start          # the local server; leave it running
 ```
 
-Load `dist/` with **Load unpacked** in `chrome://extensions`. Open a LeetCode
-problem and click the toolbar icon: the side panel opens. For now it shows the
-problem title, the language and your code, and updates about once a second as
-you type.
+Open a LeetCode problem, click the toolbar icon to open the side panel, and
+click **Start interview**. Talk through the problem out loud. The panel shows
+what Whisper heard, in small grey text, and what the interviewer says. The
+microphone is recorded only between **Start** and **Stop**. Stop saves the
+session as JSON in `server/recordings/sessions/`.
+
+The interviewer is asked whether to speak only when you pause for 2.5
+seconds, or stay silent for 60 seconds. Most of the time it chooses to stay
+quiet. Each decision is printed in the server's terminal, with its time and
+token counts.
+
+To check the Claude call on a saved recording, without the microphone:
+
+```bash
+npm run dry-run -- server/recordings/<file>.wav two-sum
+```
 
 ## Listening test
 

@@ -4,6 +4,9 @@
   --muted: #59636e;
   --bg: #ffffff;
   --code-bg: #f6f8fa;
+  --accent: #0969da;
+  --accent-bg: #ddf4ff;
+  --error: #d1242f;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -12,6 +15,9 @@
     --muted: #9198a1;
     --bg: #0d1117;
     --code-bg: #161b22;
+    --accent: #4493f8;
+    --accent-bg: #121d2f;
+    --error: #f85149;
   }
 }
 
@@ -28,13 +34,90 @@ h1 {
   font-size: 16px;
 }
 
-#language {
+#meta {
   margin: 0 0 8px;
   color: var(--muted);
 }
 
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+button {
+  padding: 6px 12px;
+  font: inherit;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+#stop {
+  background: transparent;
+  color: var(--accent);
+}
+
+#status {
+  color: var(--muted);
+}
+
+#conversation {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+#conversation li {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+#conversation time {
+  flex: none;
+  width: 3em;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* What Whisper heard: small, so the interviewer's words stand out. */
+.heard {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.interviewer span {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--accent-bg);
+}
+
+.error {
+  color: var(--error);
+}
+
+.note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+
 pre {
-  margin: 0;
+  margin: 8px 0 0;
   padding: 8px;
   overflow-x: auto;
   font-size: 12px;

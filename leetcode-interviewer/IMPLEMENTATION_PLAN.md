@@ -78,7 +78,19 @@ invalid?"). It never marks him wrong on the transcript alone.
 **Tests**: A scripted mock with each of the four triggers, and one where it
 must stay quiet. Check model IDs and prices with the `claude-api` skill before
 choosing a model.
-**Status**: Not Started
+**Decisions (22 Oct 2026)**:
+- Model: `claude-sonnet-5-5`, chosen by Coin. Adaptive thinking at `low`
+  effort, structured output, server-side refusal fallback (`"default"`).
+- The microphone is recorded by the server with ffmpeg, not by the panel:
+  that path was proven in Stage 1, and the panel's microphone permission was
+  not tested.
+- Audio is split into utterances at 700 ms pauses (measured on Coin's
+  recording). Claude is asked only after a 2.5 s pause following new speech,
+  or after 60 s of silence (once per silence).
+- `whisper-server` keeps the model loaded: 0.86 s for a 10 s clip.
+- Each call is one stateless request: the system prompt and the problem are
+  cached, and the transcript, code and event follow.
+**Status**: In Progress. Built; Claude call untested until the API key exists.
 
 ## Stage 4: Scorecard
 **Goal**: A scorecard on the four rubric categories (problem solving, coding,
