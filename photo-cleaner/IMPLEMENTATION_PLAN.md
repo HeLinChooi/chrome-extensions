@@ -26,8 +26,8 @@ Learned in this stage:
 ## Stage 3: Claude marks the photos
 **Goal**: Thumbnails go to Claude, and photos marked "probably delete" go into the Review album with a reason.
 **Success Criteria**: Run on the 102 test photos, with the cost measured.
-**Tests**: Parsing Claude's answer; choosing which photos go to the album.
-**Status**: Not Started. Open question: where the API key lives, so that it is never in the page.
+**Tests**: `test/classify.test.js`: batching, the request content, and parsing the answer (skipped or unknown verdicts are kept).
+**Status**: In Progress. Built on 22 Oct 2026 and unit-tested; not yet run against Claude. The key lives in the background worker, as in Tab Triage. The script makes the Review album only; deleting is done by hand in the app.
 
 ## Stage 4: Run on the main account
 **Goal**: One month of the main library at a time.

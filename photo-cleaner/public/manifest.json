@@ -1,13 +1,25 @@
 {
   "manifest_version": 3,
   "name": "Photo Cleaner",
-  "version": "0.1.0",
-  "description": "Loads Google Photos Toolkit on photos.google.com, without a userscript manager.",
+  "version": "0.2.0",
+  "description": "Asks Claude which Google Photos are probably not worth keeping, and puts them in a Review album.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://api.anthropic.com/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
   "content_scripts": [
     {
       "matches": ["https://photos.google.com/*"],
-      "js": ["shim.js", "gptk.js"],
+      "js": ["shim.js", "gptk.js", "cleaner.js"],
       "world": "MAIN",
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://photos.google.com/*"],
+      "js": ["bridge.js"],
       "run_at": "document_end"
     }
   ]

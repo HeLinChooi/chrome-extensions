@@ -1,11 +1,17 @@
 {
   "name": "photo-cleaner",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Chrome extension that loads Google Photos Toolkit on photos.google.com, as the base for an AI photo cleanup tool.",
+  "description": "Chrome extension that asks Claude which Google Photos are probably not worth keeping, and puts them in a Review album.",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0"
   }
 }

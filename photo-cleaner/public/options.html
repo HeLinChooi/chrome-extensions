@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Photo Cleaner options</title>
+  <style>
+    body { font: 14px system-ui, sans-serif; max-width: 520px; margin: 32px auto; padding: 0 16px; }
+    label { display: block; margin-top: 16px; font-weight: 600; }
+    input { width: 100%; box-sizing: border-box; padding: 6px; margin-top: 4px; }
+    button { margin-top: 20px; padding: 6px 16px; }
+    #status { margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Photo Cleaner</h1>
+  <p>Your Anthropic API key stays in this extension. The Google Photos page never receives it.</p>
+  <label for="apiKey">Anthropic API key</label>
+  <input id="apiKey" type="password" autocomplete="off">
+  <label for="model">Model</label>
+  <input id="model" placeholder="claude-haiku-5-5">
+  <button id="save">Save</button><span id="status"></span>
+  <script src="options.js"></script>
+</body>
+</html>

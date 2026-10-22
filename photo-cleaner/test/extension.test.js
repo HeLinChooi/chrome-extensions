@@ -11,22 +11,29 @@ const toolkitPath = new URL('../vendor/gptk/google_photos_toolkit.user.js', impo
 // A different file means someone replaced it without reading it.
 const TOOLKIT_SHA256 = '5c59367a0c467c709c82daf45711b2adb3e272cc5a3a669017879166dcc81629';
 
-test('the extension runs only on photos.google.com', () => {
-  const matches = manifest.content_scripts.flatMap((script) => script.matches);
-  assert.deepEqual(matches, ['https://photos.google.com/*']);
+const [pageScripts, bridgeScript] = manifest.content_scripts;
+
+test('the content scripts run only on photos.google.com', () => {
+  const matches = new Set(manifest.content_scripts.flatMap((script) => script.matches));
+  assert.deepEqual([...matches], ['https://photos.google.com/*']);
 });
 
-test('the extension asks for no permissions', () => {
-  assert.equal(manifest.permissions, undefined);
-  assert.equal(manifest.host_permissions, undefined);
+test('the extension can reach only the Claude API, plus its own storage', () => {
+  assert.deepEqual(manifest.permissions, ['storage']);
+  assert.deepEqual(manifest.host_permissions, ['https://api.anthropic.com/*']);
 });
 
-test('the scripts run in the page, so gptkApi is reachable from the page', () => {
-  assert.equal(manifest.content_scripts[0].world, 'MAIN');
+test('the page scripts run in the page, so gptkApi is reachable from the page', () => {
+  assert.equal(pageScripts.world, 'MAIN');
 });
 
-test('the shim loads before the Toolkit', () => {
-  assert.deepEqual(manifest.content_scripts[0].js, ['shim.js', 'gptk.js']);
+test('the shim loads before the Toolkit, and the Toolkit before the cleaner', () => {
+  assert.deepEqual(pageScripts.js, ['shim.js', 'gptk.js', 'cleaner.js']);
+});
+
+test('the bridge runs in the isolated world, where the page cannot reach chrome.runtime', () => {
+  assert.equal(bridgeScript.world, undefined);
+  assert.deepEqual(bridgeScript.js, ['bridge.js']);
 });
 
 test('the Toolkit file is the v3.3.0 release that was reviewed', async () => {
