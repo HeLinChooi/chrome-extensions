@@ -26,9 +26,21 @@ const listeners = new Set();
 let session = null;
 let mic = null;
 
+function eventText(type, data) {
+  return `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`;
+}
+
 function send(type, data) {
-  const message = `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`;
-  for (const response of listeners) response.write(message);
+  for (const response of listeners) response.write(eventText(type, data));
+}
+
+// Every status names the problem, so panels on other tabs can say which one is running.
+function status(state) {
+  return session ? { state, slug: session.slug, title: session.problem.title } : { state: 'stopped' };
+}
+
+function sendStatus(state) {
+  send('status', status(state));
 }
 
 function elapsedMs() {
@@ -65,7 +77,7 @@ async function tick() {
   current.calling = true;
   current.newSpeech = false;
   if (event === 'long-silence') current.nudged = true;
-  send('status', { state: 'thinking' });
+  sendStatus('thinking');
   try {
     const atMs = elapsedMs();
     const decision = await decide(current, event, atMs);
@@ -85,12 +97,11 @@ async function tick() {
     send('error', { message: `Interviewer failed: ${error.message}` });
   } finally {
     current.calling = false;
-    if (session === current) send('status', { state: 'listening' });
+    if (session === current) sendStatus('listening');
   }
 }
 
 async function start({ slug, language, code }) {
-  if (session) stop();
   const problem = await fetchProblem(slug);
   session = {
     slug, problem, language, code,
@@ -100,7 +111,7 @@ async function start({ slug, language, code }) {
     pendingTranscripts: 0, calling: false,
   };
   mic = startMic(onUtterance);
-  send('status', { state: 'listening', title: problem.title });
+  sendStatus('listening');
 }
 
 function stop() {
@@ -112,7 +123,7 @@ function stop() {
   const { pendingTranscripts, calling, newSpeech, nudged, ...record } = session;
   writeFileSync(file, JSON.stringify({ model: MODEL, endedAtMs: elapsedMs(), ...record }, null, 2));
   session = null;
-  send('status', { state: 'stopped' });
+  sendStatus('stopped');
   return file;
 }
 
@@ -132,12 +143,17 @@ const server = createServer(async (request, response) => {
   try {
     if (request.method === 'GET' && request.url === '/events') {
       response.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' });
-      response.write(`event: status\ndata: ${JSON.stringify({ state: session ? 'listening' : 'stopped', title: session?.problem.title })}\n\n`);
+      response.write(eventText('status', status(session?.calling ? 'thinking' : 'listening')));
       listeners.add(response);
       request.on('close', () => listeners.delete(response));
       return;
     }
     if (request.method === 'POST' && request.url === '/start') {
+      if (session) {
+        response.writeHead(409, { 'Content-Type': 'application/json' })
+          .end(JSON.stringify({ error: `an interview is already running on ${session.problem.title}` }));
+        return;
+      }
       await start(await readJson(request));
       response.writeHead(204).end();
       return;

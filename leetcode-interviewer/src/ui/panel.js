@@ -4,6 +4,8 @@
  * the interviewer says and what Whisper heard.
  */
 
+import { statusText } from '../lib/status-text.js';
+
 const SERVER = 'http://127.0.0.1:8737';
 
 const titleEl = document.getElementById('title');
@@ -17,15 +19,16 @@ const codeEl = document.getElementById('code');
 /** The tab the panel is showing; snapshots from other tabs are ignored. */
 let tabId = null;
 let snapshot = null;
-let running = false;
+/** The last status from the server. It names the problem when an interview is running. */
+let serverStatus = { state: 'stopped' };
 
 function show(next) {
   snapshot = next;
   titleEl.textContent = next ? next.title : 'Open a LeetCode problem.';
   metaEl.textContent = next ? next.language : '';
   codeEl.textContent = next ? next.code : '';
-  startEl.disabled = !next || running;
-  if (running && next) post('/snapshot', next).catch(() => {});
+  setStatus(serverStatus);
+  if (serverStatus.state !== 'stopped' && next) post('/snapshot', next).catch(() => {});
 }
 
 async function refresh() {
@@ -66,21 +69,18 @@ function addLine(kind, atMs, text) {
   item.scrollIntoView({ block: 'end' });
 }
 
-function setRunning(next, status) {
-  running = next;
-  startEl.hidden = next;
-  stopEl.hidden = !next;
-  startEl.disabled = !snapshot || next;
-  statusEl.textContent = status;
+function setStatus(next) {
+  serverStatus = next;
+  const running = next.state !== 'stopped';
+  startEl.hidden = running;
+  stopEl.hidden = !running;
+  startEl.disabled = !snapshot || running;
+  statusEl.textContent = statusText(next, snapshot?.slug ?? null);
 }
 
 function connect() {
   const events = new EventSource(`${SERVER}/events`);
-  events.addEventListener('status', (event) => {
-    const { state } = JSON.parse(event.data);
-    if (state === 'stopped') setRunning(false, '');
-    else setRunning(true, state === 'thinking' ? 'Interviewer is thinking…' : 'Listening');
-  });
+  events.addEventListener('status', (event) => setStatus(JSON.parse(event.data)));
   events.addEventListener('heard', (event) => {
     const { atMs, text } = JSON.parse(event.data);
     addLine('heard', atMs, text);

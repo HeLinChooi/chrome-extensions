@@ -47,6 +47,10 @@ microphone is recorded only between **Start interview** and **Stop
 interview**. Click Stop interview only when you have finished the problem. It
 saves the session as JSON in `server/recordings/sessions/`.
 
+Only one interview runs at a time, because there is one microphone. Every
+open panel shows the same conversation. A panel on another tab says which
+problem the interview is on, and Start interview stays hidden until you stop.
+
 The interviewer is asked whether to speak only when you pause for 2.5
 seconds, or stay silent for 60 seconds. Most of the time it chooses to stay
 quiet. Each decision is printed in the server's terminal, with its time and
