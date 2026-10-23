@@ -14,6 +14,7 @@ const startEl = document.getElementById('start');
 const stopEl = document.getElementById('stop');
 const statusEl = document.getElementById('status');
 const conversationEl = document.getElementById('conversation');
+const thinkingEl = document.getElementById('thinking');
 const codeEl = document.getElementById('code');
 
 /** The tab the panel is showing; snapshots from other tabs are ignored. */
@@ -66,7 +67,7 @@ function addLine(kind, atMs, text) {
   body.textContent = text;
   item.append(time, body);
   conversationEl.append(item);
-  item.scrollIntoView({ block: 'end' });
+  (thinkingEl.hidden ? item : thinkingEl).scrollIntoView({ block: 'end' });
 }
 
 function setStatus(next) {
@@ -76,6 +77,9 @@ function setStatus(next) {
   stopEl.hidden = !running;
   startEl.disabled = !snapshot || running;
   statusEl.textContent = statusText(next, snapshot?.slug ?? null);
+  // At the end of the conversation, where Coin is reading, not at the top.
+  thinkingEl.hidden = next.state !== 'thinking';
+  if (!thinkingEl.hidden) thinkingEl.scrollIntoView({ block: 'end' });
 }
 
 function connect() {

@@ -12,8 +12,9 @@ test('the tab with the interview shows that it is listening', () => {
   assert.equal(statusText({ state: 'listening', ...interview }, 'swim-in-rising-water'), 'Listening');
 });
 
-test('the tab with the interview shows when the interviewer is thinking', () => {
-  assert.equal(statusText({ state: 'thinking', ...interview }, 'swim-in-rising-water'), 'Interviewer is thinking…');
+// "Interviewer is thinking…" goes at the end of the conversation instead, where Coin is reading.
+test('the tab with the interview still shows listening while the interviewer thinks', () => {
+  assert.equal(statusText({ state: 'thinking', ...interview }, 'swim-in-rising-water'), 'Listening');
 });
 
 test('another problem tab names the problem the interview is on', () => {

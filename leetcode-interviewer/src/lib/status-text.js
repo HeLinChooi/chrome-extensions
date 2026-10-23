@@ -7,5 +7,6 @@ export function statusText({ state, slug, title }, activeSlug) {
   if (state === 'stopped') return '';
   // Only one interview runs at a time, so other tabs say which problem it is on.
   if (slug !== activeSlug) return `Interview running on ${title}`;
-  return state === 'thinking' ? 'Interviewer is thinking…' : 'Listening';
+  // The microphone keeps recording while the interviewer thinks.
+  return 'Listening';
 }
