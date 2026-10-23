@@ -10,7 +10,7 @@ import { createServer } from 'node:http';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { isTrustedOrigin } from './lib/origin.js';
+import { isTrustedRequest } from './lib/origin.js';
 import { nextEvent } from './lib/turns.js';
 import { fetchProblem } from './lib/problem.js';
 import { startWhisper, transcribe } from './whisper.js';
@@ -124,11 +124,11 @@ async function readJson(request) {
 
 const server = createServer(async (request, response) => {
   // The Host check stops DNS rebinding: a website whose domain resolves to 127.0.0.1.
-  if (request.headers.host !== `127.0.0.1:${PORT}` || !isTrustedOrigin(request.headers.origin)) {
+  if (request.headers.host !== `127.0.0.1:${PORT}` || !isTrustedRequest(request.method, request.headers.origin)) {
     response.writeHead(403).end();
     return;
   }
-  response.setHeader('Access-Control-Allow-Origin', request.headers.origin);
+  if (request.headers.origin) response.setHeader('Access-Control-Allow-Origin', request.headers.origin);
   try {
     if (request.method === 'GET' && request.url === '/events') {
       response.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' });

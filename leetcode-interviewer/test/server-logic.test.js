@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { nextEvent } from '../server/lib/turns.js';
 import { wavFile } from '../server/lib/wav.js';
 import { problemText } from '../server/lib/problem.js';
-import { isTrustedOrigin } from '../server/lib/origin.js';
+import { isTrustedRequest } from '../server/lib/origin.js';
 import { userContent } from '../server/lib/prompt.js';
 
 const turns = { turnEndMs: 2500, longSilenceMs: 60000 };
@@ -43,11 +43,22 @@ test('problem HTML becomes plain text', () => {
   assert.equal(problemText(html), 'Given nums and target, return <indices>.\n\n2 <= n');
 });
 
-test('only the extension may call the server', () => {
-  assert.equal(isTrustedOrigin('chrome-extension://abcdefghijklmnop'), true);
-  assert.equal(isTrustedOrigin('https://leetcode.com'), false);
-  assert.equal(isTrustedOrigin('https://evil.example'), false);
-  assert.equal(isTrustedOrigin(undefined), false);
+test('the extension may call the server', () => {
+  assert.equal(isTrustedRequest('POST', 'chrome-extension://abcdefghijklmnop'), true);
+});
+
+test('a website may not call the server', () => {
+  assert.equal(isTrustedRequest('GET', 'https://evil.example'), false);
+});
+
+// Chrome sends no Origin on a GET from an extension page with host permission
+// (checked in Chromium on 23 Oct 2026), so the panel's EventSource has none.
+test('a GET without an Origin is allowed', () => {
+  assert.equal(isTrustedRequest('GET', undefined), true);
+});
+
+test('a POST without an Origin is refused', () => {
+  assert.equal(isTrustedRequest('POST', undefined), false);
 });
 
 const session = {

@@ -99,6 +99,10 @@ and read them from the cache. Each call used 296 new input tokens and 100 to
 200 output tokens. Both replies answered his clarifying questions; the
 second also asked whether the sorted sliding window keeps the original
 indexes, without giving the answer.
+- 23 Oct 2026, first live try: the panel said "Server not running". Chrome
+  sends no Origin header on a GET from the extension page, so the server
+  refused `/events` with 403. Fixed in 0.2.1: a GET without an Origin is
+  allowed, and everything else still needs an extension Origin.
 **Status**: In Progress. Waiting for Coin's first live mock.
 
 ## Stage 4: Scorecard
