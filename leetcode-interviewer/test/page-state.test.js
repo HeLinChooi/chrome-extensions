@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { slugFromPath, codeEditorIndex, readSnapshotMessage, MESSAGE_TYPE } from '../src/lib/page-state.js';
+import { slugFromPath, codeEditorIndex, readSnapshotMessage, problemTitle, MESSAGE_TYPE } from '../src/lib/page-state.js';
 
 test('a problem path gives its slug', () => {
   assert.equal(slugFromPath('/problems/two-sum/description/'), 'two-sum');
@@ -33,4 +33,13 @@ test('any other window message is ignored', () => {
   assert.equal(readSnapshotMessage({ ...snapshot, code: 42 }), null);
   assert.equal(readSnapshotMessage('hello'), null);
   assert.equal(readSnapshotMessage(null), null);
+});
+
+test('the title is the heading link, which has the problem number', () => {
+  // On 23 Oct 2026 the link read "778. Swim in Rising Water"; the tab title has no number.
+  assert.equal(problemTitle('778. Swim in Rising Water', 'Swim in Rising Water - LeetCode'), '778. Swim in Rising Water');
+});
+
+test('without the heading link, the title comes from the tab', () => {
+  assert.equal(problemTitle(undefined, 'Swim in Rising Water - LeetCode'), 'Swim in Rising Water');
 });

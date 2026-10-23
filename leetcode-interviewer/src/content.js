@@ -3,7 +3,7 @@
  * the latest snapshot from page.js and passes it to the side panel.
  */
 
-import { readSnapshotMessage } from './lib/page-state.js';
+import { readSnapshotMessage, problemTitle } from './lib/page-state.js';
 
 /** The latest snapshot, so a panel opened later can ask for it. */
 let latest = null;
@@ -12,7 +12,8 @@ window.addEventListener('message', (event) => {
   if (event.source !== window) return;
   const snapshot = readSnapshotMessage(event.data);
   if (!snapshot) return;
-  latest = { ...snapshot, title: document.title.replace(/ - LeetCode$/, '') };
+  const heading = document.querySelector(`a[href="/problems/${snapshot.slug}/"]`);
+  latest = { ...snapshot, title: problemTitle(heading?.textContent, document.title) };
   // Fails when no panel is open to receive it. The panel asks for `latest` when it opens.
   chrome.runtime.sendMessage({ type: 'snapshot', snapshot: latest }).catch(() => {});
 });

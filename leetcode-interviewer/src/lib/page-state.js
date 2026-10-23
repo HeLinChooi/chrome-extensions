@@ -30,3 +30,12 @@ export function readSnapshotMessage(data) {
   if (typeof slug !== 'string' || typeof language !== 'string' || typeof code !== 'string') return null;
   return { slug, language, code };
 }
+
+/**
+ * "778. Swim in Rising Water". The heading link has the number; the tab title
+ * ("Swim in Rising Water - LeetCode") does not, so it is only the fallback.
+ * @param {string | undefined} headingText text of the link to the problem
+ */
+export function problemTitle(headingText, documentTitle) {
+  return headingText?.trim() || documentTitle.replace(/ - LeetCode$/, '');
+}

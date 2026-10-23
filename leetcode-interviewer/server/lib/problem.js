@@ -18,12 +18,12 @@ export async function fetchProblem(slug) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      query: 'query q($slug: String!) { question(titleSlug: $slug) { title difficulty content } }',
+      query: 'query q($slug: String!) { question(titleSlug: $slug) { questionFrontendId title difficulty content } }',
       variables: { slug },
     }),
   });
   if (!response.ok) throw new Error(`LeetCode returned ${response.status} for problem "${slug}"`);
   const question = (await response.json()).data?.question;
   if (!question?.content) throw new Error(`LeetCode has no statement for problem "${slug}" (is it Premium?)`);
-  return { title: question.title, difficulty: question.difficulty, text: problemText(question.content) };
+  return { title: `${question.questionFrontendId}. ${question.title}`, difficulty: question.difficulty, text: problemText(question.content) };
 }
