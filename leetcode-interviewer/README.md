@@ -20,6 +20,17 @@ curl -L -o ~/.local/share/whisper/ggml-large-v3-turbo.bin \
 The model is 1.6 GB. Its SHA-256 is
 `1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69`.
 
+Whisper also needs a small speech detector (Silero VAD, 885 KB). Without it,
+Whisper writes "Thank you." when you are quiet.
+
+```bash
+curl -L -o ~/.local/share/whisper/ggml-silero-v6.2.0.bin \
+  https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin
+```
+
+Its SHA-256 is
+`2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987`.
+
 ## The API key
 
 The server calls Claude (Sonnet 5.5) with your own API key. It reads the key

@@ -103,6 +103,12 @@ indexes, without giving the answer.
   sends no Origin header on a GET from the extension page, so the server
   refused `/events` with 403. Fixed in 0.2.1: a GET without an Origin is
   allowed, and everything else still needs an extension Origin.
+- 23 Oct 2026, first live mocks: while Coin was quiet, "Thank you." appeared
+  about every 14 seconds (8 times in one 2-minute session). Whisper writes
+  that for a clip with no speech. Fixed in 0.3.2 with whisper.cpp's Silero
+  speech detector (`--vad`): silence, noise and a beep gave no text, his
+  passage had 8 wrong words instead of 9, and one-word replies ("Done.",
+  "Yes.") still came through. What made a sound every 14 seconds is unknown.
 **Status**: In Progress. Waiting for Coin's first live mock.
 
 ## Stage 4: Scorecard

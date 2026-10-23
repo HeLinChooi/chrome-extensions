@@ -1,6 +1,6 @@
 {
   "name": "leetcode-interviewer",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "A mock interviewer that listens while you solve a LeetCode problem out loud.",
   "type": "module",
