@@ -6,9 +6,13 @@
  * - 'long-silence': he has been quiet for a long time, and may be stuck.
  *   Asked once per silence (`nudged`).
  * Between these, nothing is sent: that is how the interviewer stays quiet.
+ *
+ * silentMs is quiet by loudness: fast, but typing or room noise can stop it
+ * ever growing. textQuietMs is the time since Whisper last returned words,
+ * which noise does not reset.
  */
-export function nextEvent({ silentMs, newSpeech, nudged, turnEndMs, longSilenceMs }) {
-  if (newSpeech && silentMs >= turnEndMs) return 'turn-end';
-  if (!nudged && silentMs >= longSilenceMs) return 'long-silence';
+export function nextEvent({ silentMs, textQuietMs, newSpeech, nudged, turnEndMs, textTurnEndMs, longSilenceMs }) {
+  if (newSpeech && (silentMs >= turnEndMs || textQuietMs >= textTurnEndMs)) return 'turn-end';
+  if (!nudged && textQuietMs >= longSilenceMs) return 'long-silence';
   return null;
 }

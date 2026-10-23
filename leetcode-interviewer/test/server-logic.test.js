@@ -6,23 +6,37 @@ import { problemText } from '../server/lib/problem.js';
 import { isTrustedRequest } from '../server/lib/origin.js';
 import { userContent } from '../server/lib/prompt.js';
 
-const turns = { turnEndMs: 2500, longSilenceMs: 60000 };
+const turns = { turnEndMs: 2500, textTurnEndMs: 5000, longSilenceMs: 60000 };
 
 test('a pause after new speech ends the turn', () => {
-  assert.equal(nextEvent({ ...turns, silentMs: 2500, newSpeech: true, nudged: false }), 'turn-end');
+  assert.equal(nextEvent({ ...turns, silentMs: 2500, textQuietMs: 2500, newSpeech: true, nudged: false }), 'turn-end');
 });
 
 test('a short pause is not the end of a turn', () => {
-  assert.equal(nextEvent({ ...turns, silentMs: 2000, newSpeech: true, nudged: false }), null);
+  assert.equal(nextEvent({ ...turns, silentMs: 2000, textQuietMs: 2000, newSpeech: true, nudged: false }), null);
+});
+
+// Typing or room noise can keep the microphone loud, so the pause by loudness
+// never comes. On 23 Oct 2026 a question waited 43 s for a reply this way.
+test('in a noisy room, 5 s with no new text ends the turn', () => {
+  assert.equal(nextEvent({ ...turns, silentMs: 0, textQuietMs: 5000, newSpeech: true, nudged: false }), 'turn-end');
+});
+
+test('in a noisy room, 4 s with no new text is not yet the end of a turn', () => {
+  assert.equal(nextEvent({ ...turns, silentMs: 0, textQuietMs: 4000, newSpeech: true, nudged: false }), null);
 });
 
 test('a pause with nothing new said asks nothing', () => {
-  assert.equal(nextEvent({ ...turns, silentMs: 30000, newSpeech: false, nudged: false }), null);
+  assert.equal(nextEvent({ ...turns, silentMs: 30000, textQuietMs: 30000, newSpeech: false, nudged: false }), null);
 });
 
 test('a long silence asks once', () => {
-  assert.equal(nextEvent({ ...turns, silentMs: 60000, newSpeech: false, nudged: false }), 'long-silence');
-  assert.equal(nextEvent({ ...turns, silentMs: 90000, newSpeech: false, nudged: true }), null);
+  assert.equal(nextEvent({ ...turns, silentMs: 60000, textQuietMs: 60000, newSpeech: false, nudged: false }), 'long-silence');
+  assert.equal(nextEvent({ ...turns, silentMs: 90000, textQuietMs: 90000, newSpeech: false, nudged: true }), null);
+});
+
+test('a long silence is measured by text, so noise does not hide it', () => {
+  assert.equal(nextEvent({ ...turns, silentMs: 0, textQuietMs: 60000, newSpeech: false, nudged: false }), 'long-silence');
 });
 
 test('a WAV file is a 44-byte header for 16 kHz mono 16-bit, then the samples', () => {

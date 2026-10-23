@@ -85,8 +85,8 @@ choosing a model.
   that path was proven in Stage 1, and the panel's microphone permission was
   not tested.
 - Audio is split into utterances at 700 ms pauses (measured on Coin's
-  recording). Claude is asked only after a 2.5 s pause following new speech,
-  or after 60 s of silence (once per silence).
+  recording), and cut at 6 s. Claude is asked after new words, then a 2.5 s
+  pause or 5 s with no new words; or after 60 s with no words (once).
 - `whisper-server` keeps the model loaded: 0.86 s for a 10 s clip.
 - Each call is one stateless request: the system prompt and the problem are
   cached, and the transcript, code and event follow.
@@ -109,6 +109,16 @@ indexes, without giving the answer.
   speech detector (`--vad`): silence, noise and a beep gave no text, his
   passage had 8 wrong words instead of 9, and one-word replies ("Done.",
   "Yes.") still came through. What made a sound every 14 seconds is unknown.
+- 23 Oct 2026, 123. Best Time to Buy and Sell Stock III: Coin asked "What
+  do you think? Can you answer me?" at 14:11 and got a reply only at 16:05.
+  Four decisions in between chose quiet. Replaying that moment, Claude
+  answered 3 of 3 times with the old prompt too, so the question most likely
+  had not reached Claude yet. The likely cause: quiet was measured only by
+  loudness, so typing or noise held an utterance open for up to 30 s, and the
+  2.5 s pause never came. Fixed in 0.4.0: utterances are cut at 6 s, a turn
+  also ends after 5 s with no new words (Coin's idea, as on interviewing.io),
+  and the long silence is measured by words. The session now logs every
+  piece of audio (`pieces`), to confirm the cause on the next mock.
 **Status**: In Progress. Waiting for Coin's first live mock.
 
 ## Stage 4: Scorecard

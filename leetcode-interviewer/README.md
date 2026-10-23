@@ -62,9 +62,10 @@ Only one interview runs at a time, because there is one microphone. Every
 open panel shows the same conversation. A panel on another tab says which
 problem the interview is on, and Start interview stays hidden until you stop.
 
-The interviewer is asked whether to speak only when you pause for 2.5
-seconds, or stay silent for 60 seconds. Most of the time it chooses to stay
-quiet. Each decision is printed in the server's terminal, with its time and
+The interviewer is asked whether to speak only after you say something and
+then pause for 2.5 seconds, or after 5 seconds with no new words (typing
+can hide a pause). It is also asked after 60 seconds with no words. Most of
+the time it chooses to stay quiet. Each decision is printed in the server's terminal, with its time and
 token counts.
 
 To check the Claude call on a saved recording, without the microphone:

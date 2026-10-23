@@ -20,7 +20,7 @@ if (!wav) {
 
 const FRAME_BYTES = 960;
 const samples = readFileSync(wav).subarray(44);
-const splitter = createSplitter({ threshold: 400, frameMs: 30, minSpeechMs: 150, endSilenceMs: 700, maxUtteranceMs: 30000 });
+const splitter = createSplitter({ threshold: 400, frameMs: 30, minSpeechMs: 150, endSilenceMs: 700, maxUtteranceMs: 6000 });
 const cuts = [];
 for (let i = 0; i * FRAME_BYTES + FRAME_BYTES <= samples.length; i++) {
   const cut = splitter.push(frameLoudness(samples.subarray(i * FRAME_BYTES, (i + 1) * FRAME_BYTES)));

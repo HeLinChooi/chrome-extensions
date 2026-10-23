@@ -7,7 +7,9 @@ const FRAME_MS = 30;
 const FRAME_BYTES = (16000 * 2 * FRAME_MS) / 1000;
 /** Audio kept from before speech was detected, so the first syllable is not cut off. */
 const PRE_ROLL_FRAMES = 10;
-const MAX_UTTERANCE_MS = 30000;
+// Typing or room noise can keep an utterance open; this cut sends it to
+// Whisper anyway, so words never wait longer than this to be heard.
+const MAX_UTTERANCE_MS = 6000;
 
 // Threshold from Coin's recording on 22 Oct 2026: background was about 100
 // to 150, speech mostly above 1000. 700 ms of quiet splits at his sentence

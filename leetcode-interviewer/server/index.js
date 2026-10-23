@@ -18,7 +18,7 @@ import { startMic } from './mic.js';
 import { decide, MODEL } from './interviewer.js';
 
 const PORT = 8737;
-const TURNS = { turnEndMs: 2500, longSilenceMs: 60000 };
+const TURNS = { turnEndMs: 2500, textTurnEndMs: 5000, longSilenceMs: 60000 };
 const SESSIONS_DIR = join(dirname(fileURLToPath(import.meta.url)), 'recordings', 'sessions');
 
 const whisper = await startWhisper();
@@ -52,8 +52,12 @@ async function onUtterance(samples, startMs) {
   if (!current) return;
   current.pendingTranscripts++;
   try {
+    const sentAt = Date.now();
     const text = await transcribe(samples);
+    // Every piece, with or without words, so a session shows what the microphone sent.
+    current.pieces.push({ atMs: startMs, lengthMs: samples.length / 32, transcribeMs: Date.now() - sentAt, text });
     if (!text) return;
+    current.lastTextAt = Date.now();
     // The mic starts with the session, so its clock and the session's agree.
     const line = { atMs: startMs, text };
     current.transcript.push(line);
@@ -71,7 +75,13 @@ async function onUtterance(samples, startMs) {
 async function tick() {
   const current = session;
   if (!current || current.calling || current.pendingTranscripts > 0) return;
-  const event = nextEvent({ ...TURNS, silentMs: mic.silentMs(), newSpeech: current.newSpeech, nudged: current.nudged });
+  const event = nextEvent({
+    ...TURNS,
+    silentMs: mic.silentMs(),
+    textQuietMs: Date.now() - current.lastTextAt,
+    newSpeech: current.newSpeech,
+    nudged: current.nudged,
+  });
   if (!event) return;
 
   current.calling = true;
@@ -106,7 +116,8 @@ async function start({ slug, language, code }) {
   session = {
     slug, problem, language, code,
     startedAt: Date.now(),
-    transcript: [], interviewer: [], decisions: [],
+    lastTextAt: Date.now(),
+    transcript: [], interviewer: [], decisions: [], pieces: [],
     hintsGiven: 0, newSpeech: false, nudged: false,
     pendingTranscripts: 0, calling: false,
   };
@@ -120,7 +131,7 @@ function stop() {
   mic = null;
   mkdirSync(SESSIONS_DIR, { recursive: true });
   const file = join(SESSIONS_DIR, `${new Date(session.startedAt).toISOString().replace(/[:.]/g, '-')}-${session.slug}.json`);
-  const { pendingTranscripts, calling, newSpeech, nudged, ...record } = session;
+  const { pendingTranscripts, calling, newSpeech, nudged, lastTextAt, ...record } = session;
   writeFileSync(file, JSON.stringify({ model: MODEL, endedAtMs: elapsedMs(), ...record }, null, 2));
   session = null;
   sendStatus('stopped');
