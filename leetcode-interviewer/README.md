@@ -43,8 +43,9 @@ npm start          # the local server; leave it running
 Open a LeetCode problem, click the toolbar icon to open the side panel, and
 click **Start interview**. Talk through the problem out loud. The panel shows
 what Whisper heard, in small grey text, and what the interviewer says. The
-microphone is recorded only between **Start** and **Stop**. Stop saves the
-session as JSON in `server/recordings/sessions/`.
+microphone is recorded only between **Start interview** and **Stop
+interview**. Click Stop interview only when you have finished the problem. It
+saves the session as JSON in `server/recordings/sessions/`.
 
 The interviewer is asked whether to speak only when you pause for 2.5
 seconds, or stay silent for 60 seconds. Most of the time it chooses to stay
