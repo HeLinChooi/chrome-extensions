@@ -26,6 +26,17 @@ keeps score so that solving problems feels like progress.
 Every 100 XP is a level. The streak counts days with at least one solve that
 earned XP. The daily goal is 2 by default and can be changed in the popup.
 
+## Hiding the difficulty
+
+For the recognition drill, the popup has a **Hide difficulty** switch. While
+it is on, every "Easy", "Medium" and "Hard" label on a problem page shows
+"Difficulty?" instead, including the Similar Questions list. Click a label to
+see it. The switch takes effect on open tabs at once.
+
+Labels are found by their text, not by LeetCode's class names, which change
+when the site is redesigned. The code is `src/hide-difficulty.js`. The card
+after an accepted submission still names the difficulty.
+
 ## How it detects "Accepted"
 
 After **Submit**, the LeetCode page asks

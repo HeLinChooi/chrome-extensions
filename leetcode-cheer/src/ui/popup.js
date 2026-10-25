@@ -51,6 +51,15 @@ $('goal').addEventListener('change', async () => {
   render(state);
 });
 
+// Read by hide-difficulty.js on every open LeetCode tab, which updates at once.
+const HIDE_KEY = 'hideDifficulty';
+chrome.storage.local.get(HIDE_KEY).then((stored) => {
+  $('hideDifficulty').checked = Boolean(stored[HIDE_KEY]);
+});
+$('hideDifficulty').addEventListener('change', () => {
+  chrome.storage.local.set({ [HIDE_KEY]: $('hideDifficulty').checked });
+});
+
 for (const button of document.querySelectorAll('.previews button')) {
   button.addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

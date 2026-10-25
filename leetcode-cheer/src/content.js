@@ -6,8 +6,11 @@
 import { slugFromPath, MESSAGE_TYPE } from './lib/check.js';
 import { emptyState, recordAccepted, recordFailure, BASE_XP } from './lib/progress.js';
 import { throwConfetti, showCard } from './celebrate.js';
+import { startHidingDifficulty } from './hide-difficulty.js';
 
 const STATE_KEY = 'progress';
+
+startHidingDifficulty();
 
 /** Title and difficulty from LeetCode's public GraphQL API, or nulls if it fails. */
 async function problemInfo(slug) {
