@@ -1,11 +1,13 @@
 {
   "name": "work-hours",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "private": true,
   "description": "Chrome extension that shows each price on Malaysian and Singapore shopping sites as the hours of work it costs.",
   "type": "module",
   "scripts": {
+    "prebuild": "node ../scripts/set-version.mjs .",
     "build": "node esbuild.config.mjs",
+    "prewatch": "node ../scripts/set-version.mjs .",
     "watch": "node esbuild.config.mjs --watch",
     "icons": "node scripts/gen-icons.mjs",
     "test": "node --test test/*.test.js"

@@ -10,21 +10,34 @@ the key stays in a file outside the repo.
 
 ## Versions
 
-Bump an extension's version on every fix or change, before Coin reloads it.
-Coin asked for this on 21 Oct 2026. `chrome://extensions` shows the version,
-so the number is how he tells which build is running. Reloading loads new code
-even when the number is unchanged, so without a bump nothing on screen says
-the reload took.
+Every change raises an extension's version. `chrome://extensions` shows the
+version, so the number is how Coin tells which build is running. Reloading
+loads new code even when the number is unchanged, so without a new number
+nothing on screen says the reload took.
 
-Patch for a fix (0.1.0 → 0.1.1). Minor for a feature or a new permission
-(0.1.1 → 0.2.0).
+**Never set the last number by hand.** `scripts/set-version.mjs` sets it from
+git (since 21 Nov 2026, when Coin asked for version bumps a script does, not
+an agent):
 
-In a folder with a build (all except Highlight), three places must agree:
+- The last number is the number of commits that changed the extension's
+  folder, plus one while the folder has uncommitted changes.
+- The first two numbers stay as written. Raise the middle one by hand for a
+  feature or a new permission (0.4 → 0.5) if you want; the script keeps it.
+- It writes `public/manifest.json` (or `manifest.json`), `package.json` and
+  `package-lock.json`, so they always agree.
 
-```bash
-npm version X.Y.Z --no-git-tag-version   # package.json and package-lock.json
-# then edit "version" in public/manifest.json by hand
-npm run build                            # copies the manifest into dist/
-```
+It runs in two places:
 
-Highlight has no build: edit `version` in `highlight/manifest.json`.
+1. **Before every build.** `prebuild` and `prewatch` in each `package.json`.
+   Run `npm run build` in the extension's folder before Coin reloads it, so
+   `dist/` has the new number. Highlight has no real build, but
+   `npm run build` there sets the version in `highlight/manifest.json`.
+2. **On every commit.** `.githooks/pre-commit` sets and stages the version of
+   each extension the commit changes, even when nobody ran a build.
+
+The hook only runs after `git config core.hooksPath .githooks` in a clone.
+`claude/hooks/check-tools.sh` in ai-brain warns at session start when it is
+not set.
+
+A new extension gets the same two: a `prebuild` line in its `package.json`,
+and a `manifest.json` or `public/manifest.json` with a `version`.

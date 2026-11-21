@@ -1,0 +1,5 @@
+#!/bin/sh
+# Sets the version of every extension this commit changes, so no one has to
+# remember to. See scripts/set-version.mjs. Turned on by:
+#   git config core.hooksPath .githooks
+exec node scripts/set-version.mjs --staged */

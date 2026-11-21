@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Dark Mode",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Turns every website dark, using the Dark Reader engine. Per-site switch, brightness, contrast and sepia.",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["<all_urls>"],
