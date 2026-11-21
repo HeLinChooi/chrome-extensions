@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Cheer",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted.",
   "permissions": ["storage"],
   "content_scripts": [

@@ -1,15 +1,13 @@
 {
   "name": "leetcode-interviewer",
-  "version": "0.4.14",
+  "version": "0.4.15",
   "private": true,
   "description": "A mock interviewer that listens while you solve a LeetCode problem out loud.",
   "type": "module",
   "scripts": {
     "start": "node server/index.js",
     "dry-run": "node server/dry-run.js",
-    "prebuild": "node ../scripts/set-version.mjs .",
     "build": "node esbuild.config.mjs",
-    "prewatch": "node ../scripts/set-version.mjs .",
     "watch": "node esbuild.config.mjs --watch",
     "listen-test": "node server/listen-test.js",
     "test": "node --test test/*.test.js"

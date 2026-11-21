@@ -1,9 +1,0 @@
-{
-  "name": "highlight",
-  "private": true,
-  "version": "1.2.4",
-  "description": "No build: Chrome loads this folder as it is. The build only sets the version in manifest.json.",
-  "scripts": {
-    "build": "node ../scripts/set-version.mjs ."
-  }
-}

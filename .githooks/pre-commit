@@ -1,5 +1,4 @@
 #!/bin/sh
-# Sets the version of every extension this commit changes, so no one has to
-# remember to. See scripts/set-version.mjs. Turned on by:
-#   git config core.hooksPath .githooks
-exec node scripts/set-version.mjs --staged */
+# Refuses a commit that changes an extension without raising its version.
+# See scripts/version.mjs. Turned on by: git config core.hooksPath .githooks
+exec node scripts/version.mjs check-staged */

@@ -15,29 +15,42 @@ version, so the number is how Coin tells which build is running. Reloading
 loads new code even when the number is unchanged, so without a new number
 nothing on screen says the reload took.
 
-**Never set the last number by hand.** `scripts/set-version.mjs` sets it from
-git (since 21 Nov 2026, when Coin asked for version bumps a script does, not
-an agent):
+Versions are MAJOR.MINOR.PATCH. Choose the step from what changed:
 
-- The last number is the number of commits that changed the extension's
-  folder, plus one while the folder has uncommitted changes.
-- The first two numbers stay as written. Raise the middle one by hand for a
-  feature or a new permission (0.4 → 0.5) if you want; the script keeps it.
-- It writes `public/manifest.json` (or `manifest.json`), `package.json` and
-  `package-lock.json`, so they always agree.
+- **major**: something that used to work now works differently or is gone
+- **minor**: a new feature
+- **patch**: a fix, or any other change
 
-It runs in two places:
+**Before building, set the version with the script, never by hand:**
 
-1. **Before every build.** `prebuild` and `prewatch` in each `package.json`.
-   Run `npm run build` in the extension's folder before Coin reloads it, so
-   `dist/` has the new number. Highlight has no real build, but
-   `npm run build` there sets the version in `highlight/manifest.json`.
-2. **On every commit.** `.githooks/pre-commit` sets and stages the version of
-   each extension the commit changes, even when nobody ran a build.
+```bash
+node scripts/version.mjs bump <major|minor|patch> <extension folder>
+npm run build      # in the extension's folder; copies the manifest into dist/
+```
 
-The hook only runs after `git config core.hooksPath .githooks` in a clone.
-`claude/hooks/check-tools.sh` in ai-brain warns at session start when it is
-not set.
+`bump` counts from the version in the last commit, so running it twice gives
+the same number. It writes `public/manifest.json` (or `manifest.json` for
+Highlight), `package.json` and `package-lock.json`, so they always agree.
 
-A new extension gets the same two: a `prebuild` line in its `package.json`,
-and a `manifest.json` or `public/manifest.json` with a `version`.
+**Commit with a Conventional Commits message** whose type names the same
+step: `feat!:` (or any type with `!`) for major, `feat:` for minor, and
+`fix:`, `chore:`, `refactor:` and the like for patch. Put the folder in the
+scope: `feat(tab-triage): group tabs by site`.
+
+Two git hooks refuse a commit that breaks this (since 21 Nov 2026, when Coin
+asked for version rules a script enforces, not an agent's memory):
+
+- `.githooks/pre-commit`: an extension folder changed, but its staged version
+  is not exactly one step above the last commit's.
+- `.githooks/commit-msg`: the message has no type, or names a different step.
+
+A Markdown-only change needs no new version. The hooks only run after
+`git config core.hooksPath .githooks` in a clone; `claude/hooks/check-tools.sh`
+in ai-brain warns at session start when it is not set.
+
+`scripts/version.mjs` is the main copy. file-viewers, coach and jaga hold
+copies. To change it: edit it here, run `node --test scripts/*.test.mjs`,
+then copy it to the other three. check-tools.sh warns when a copy differs.
+
+A new extension needs a `version` in `manifest.json` or `public/manifest.json`.
+Write its first version by hand, such as 0.1.0.

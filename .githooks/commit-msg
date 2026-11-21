@@ -1,0 +1,4 @@
+#!/bin/sh
+# Refuses a commit whose message does not name the same version step:
+# "feat!:" major, "feat:" minor, any other type patch. See scripts/version.mjs.
+exec node scripts/version.mjs check-message "$1" */
