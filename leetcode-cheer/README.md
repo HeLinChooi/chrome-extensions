@@ -37,6 +37,24 @@ Labels are found by their text, not by LeetCode's class names, which change
 when the site is redesigned. The code is `src/hide-difficulty.js`. The card
 after an accepted submission still names the difficulty.
 
+## Hiding the AI interviewer on interviewing.io
+
+On an AI interview at `start.interviewing.io/interview-ai/<id>`, the chat with
+the AI interviewer takes the right 40% of the page. The popup's **Hide AI
+interviewer** switch hides it, and the code editor on the left takes the full
+width. The switch takes effect on open tabs at once.
+
+Deleting the chat in DevTools is not enough, because the editor's panel has a
+fixed width of 60%. So the code also sets that panel to 100%.
+
+The panels are found by the ids of what they hold: the editor's
+`iframe#ai_coder_pad` and the chat's `textarea#message_body`. If the switch
+stops working after interviewing.io changes its site, check those two ids
+first. The code is `src/hide-chat.js`.
+
+While the chat is hidden, its buttons are hidden too, including the button that
+ends the interview. Turn the switch off to use them.
+
 ## How it detects "Accepted"
 
 After **Submit**, the LeetCode page asks

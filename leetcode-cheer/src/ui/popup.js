@@ -60,6 +60,15 @@ $('hideDifficulty').addEventListener('change', () => {
   chrome.storage.local.set({ [HIDE_KEY]: $('hideDifficulty').checked });
 });
 
+// Read by hide-chat.js on every open interviewing.io tab, which updates at once.
+const HIDE_CHAT_KEY = 'hideInterviewerChat';
+chrome.storage.local.get(HIDE_CHAT_KEY).then((stored) => {
+  $('hideInterviewerChat').checked = Boolean(stored[HIDE_CHAT_KEY]);
+});
+$('hideInterviewerChat').addEventListener('change', () => {
+  chrome.storage.local.set({ [HIDE_CHAT_KEY]: $('hideInterviewerChat').checked });
+});
+
 for (const button of document.querySelectorAll('.previews button')) {
   button.addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

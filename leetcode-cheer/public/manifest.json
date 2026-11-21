@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Cheer",
-  "version": "0.2.5",
-  "description": "Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted.",
+  "version": "0.3.0",
+  "description": "Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted. Can hide the AI interviewer chat on interviewing.io.",
   "permissions": ["storage"],
   "content_scripts": [
     {
@@ -15,6 +15,11 @@
       "matches": ["https://leetcode.com/problems/*"],
       "js": ["content.js"],
       "run_at": "document_start"
+    },
+    {
+      "matches": ["https://start.interviewing.io/*"],
+      "js": ["hide-chat.js"],
+      "run_at": "document_end"
     }
   ],
   "action": {

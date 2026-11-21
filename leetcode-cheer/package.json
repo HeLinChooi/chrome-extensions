@@ -1,6 +1,6 @@
 {
   "name": "leetcode-cheer",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "private": true,
   "description": "Chrome extension that celebrates accepted LeetCode submissions with confetti, XP, streaks and a daily goal.",
   "type": "module",

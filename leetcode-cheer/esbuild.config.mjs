@@ -15,7 +15,7 @@ const shared = {
 
 // Content scripts cannot be ES modules, so they are bundled as plain scripts.
 const builds = [
-  { ...shared, entryPoints: { interceptor: 'src/interceptor.js', content: 'src/content.js' }, format: 'iife' },
+  { ...shared, entryPoints: { interceptor: 'src/interceptor.js', content: 'src/content.js', 'hide-chat': 'src/hide-chat.js' }, format: 'iife' },
   { ...shared, entryPoints: { popup: 'src/ui/popup.js' }, format: 'esm' },
 ];
 

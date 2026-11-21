@@ -8,7 +8,7 @@ with its own build, tests and README.
 | [Tab Triage](tab-triage/) | Estimates how long it would take to clear your open tabs, groups them by site and task, and sends a morning summary. Estimates come from local rules, or from Claude with your own API key. |
 | [Ad Block](ad-block/) | Blocks ads, trackers and cookie banners, in the style of Ghostery. EasyList, EasyPrivacy and the EasyList Cookie List are converted to Chrome's `declarativeNetRequest` rules at build time. A site can be paused for 1 hour, 1 day or always. |
 | [Dark Mode](dark-mode/) | Turns websites dark with the Dark Reader engine. Each site can be dark or light by its own choice. |
-| [LeetCode Cheer](leetcode-cheer/) | Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted. Can hide problem difficulty for a recognition drill. |
+| [LeetCode Cheer](leetcode-cheer/) | Confetti, XP, streaks and a daily goal when a LeetCode submission is accepted. Can hide problem difficulty for a recognition drill, and the AI interviewer chat on interviewing.io. |
 | [Break Reminder](break-reminder/) | Reminds you to take a break after 30 minutes of screen time, measured from keyboard and mouse input across the whole computer. |
 | [Work Hours](work-hours/) | Shows each price on Shopee, Lazada and Zalora, in Malaysia and Singapore, as the hours of work it costs, from your monthly take-home pay. |
 | [Photo Cleaner](photo-cleaner/) | Loads Google Photos Toolkit on photos.google.com without Tampermonkey. The first stage of an AI tool for cleaning up a Google Photos library. |
